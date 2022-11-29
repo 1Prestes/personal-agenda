@@ -1,16 +1,19 @@
-import { Button, Checkbox, Col, Divider, Form, Input, Row, Typography } from 'antd';
+import { Button, Checkbox, Col, Form, Input, Row, Typography } from 'antd';
 import { Link } from 'react-router-dom';
 
+import { ILoginRequest, useLoginMutation } from '../../services/auth'
 import { Banner, Header, SignInContainer } from './styles'
 
 export const SignIn = () => {
   const { Paragraph, Title } = Typography;
+  const [login, { isLoading }] = useLoginMutation()
 
-  const onFinish = (values: any) => {
+  const onFinish = async (values: ILoginRequest) => {
     console.log('Success:', values);
+    await login(values).unwrap()
   };
 
-  const onFinishFailed = (errorInfo: any) => {
+  const onFinishFailed = (errorInfo: Object) => {
     console.log('Failed:', errorInfo);
   };
 
@@ -37,22 +40,22 @@ export const SignIn = () => {
               name="username"
               rules={[{ required: true, message: 'Por favor insira seu nome de usuário!' }]}
             >
-              <Input placeholder='Nome de usuário' minLength={3} />
+              <Input disabled={isLoading} placeholder='Nome de usuário' minLength={3} />
             </Form.Item>
 
             <Form.Item
               name="password"
               rules={[{ required: true, message: 'Por favor insira sua senha!' }]}
             >
-              <Input.Password placeholder='Senha' minLength={6} />
+              <Input.Password disabled={isLoading} placeholder='Senha' minLength={6} />
             </Form.Item>
 
             <Form.Item name="remember" valuePropName="checked">
-              <Checkbox>Lembre de mim</Checkbox>
+              <Checkbox disabled={isLoading}>Lembre de mim</Checkbox>
             </Form.Item>
 
             <Form.Item>
-              <Button type="primary" htmlType="submit" size="middle" block>
+              <Button loading={isLoading} type="primary" htmlType="submit" size="middle" block>
                 Entrar
               </Button>
             </Form.Item>
