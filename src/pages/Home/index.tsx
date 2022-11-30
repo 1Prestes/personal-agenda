@@ -38,17 +38,27 @@ const items: MenuItem[] = [
     getItem('Listar', '6'),
     getItem('Novo', '8')
   ]),
-  getItem('Sair', '9', <LogoutOutlined />),
+  getItem('Sair', 'logout', <LogoutOutlined />,),
 ];
 
 export const Home: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
 
+  const onClick: MenuProps['onClick'] = (e) => {
+    console.log(e.key);
+  };
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
         <div className="logo" />
-        <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
+        <Menu
+          theme="dark"
+          defaultSelectedKeys={['1']}
+          mode="inline"
+          items={items}
+          onClick={onClick}
+        />
       </Sider>
       < Layout className="site-layout" >
         <Header className="site-layout-background" style={{ padding: 0 }} />

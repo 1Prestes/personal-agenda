@@ -4,18 +4,24 @@ import {
 
 import { SignIn } from './pages/SignIn';
 import { Home } from "./pages/Home";
+import { PrivateRoute } from "./PrivateRoute";
+import { PublicRoute } from "./PublicRoute";
 
 export const Router = createBrowserRouter([
   {
     path: "/",
     element: (
-      <SignIn />
+      <PublicRoute>
+        <SignIn />
+      </PublicRoute>
     ),
   },
   {
     path: "/home",
     element: (
-      <Home />
+      <PrivateRoute>
+        <Home />
+      </PrivateRoute>
     ),
   },
 ]);
