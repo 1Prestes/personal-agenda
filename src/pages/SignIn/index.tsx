@@ -9,13 +9,13 @@ import { setToken } from '../../helpers/storage';
 import { Banner, Header, SignInContainer } from './styles'
 
 export const SignIn = () => {
-  let navigate = useNavigate();
-  let location = useLocation();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { Paragraph, Title } = Typography;
   const [login, { isLoading }] = useLoginMutation()
   const [messageApi, contextHolder] = message.useMessage();
   const { token, error } = useAppSelector(state => state.auth)
-  let from = location.state?.from?.pathname || "/";
+  const from = location.state?.from?.pathname || "/";
 
   const onFinish = async (values: ILoginRequest) => {
     await login(values).unwrap()

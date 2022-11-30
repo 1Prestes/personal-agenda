@@ -17,5 +17,5 @@ export const setToken = (token: string) => {
 };
 
 export const getToken = () => cookies.get(tokenPrefix)
-export const removeToken = () => cookies.remove(tokenPrefix)
+export const removeToken = () => cookies.remove(tokenPrefix, defaultOptions)
 
