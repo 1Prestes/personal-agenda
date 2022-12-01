@@ -1,8 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-import { removeToken } from '../../helpers/storage';
+import { getToken, removeToken } from '../../helpers/storage';
 import { authApi, IUserResponse } from '../../services/auth';
 import { RootState } from '../../store/store';
+import { setUser } from '../user/getUserSlice';
 
 interface IError {
   code: string
@@ -12,7 +13,7 @@ interface IError {
 
 const initialState = {
   user: null,
-  token: null,
+  token: getToken() || null,
   isAuthenticated: false,
   error: null,
 } as {
@@ -36,7 +37,7 @@ const slice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addMatcher(authApi.endpoints.login.matchRejected, (state, action) => {
+      .addMatcher(authApi.endpoints.login.matchPending, (state, action) => {
         state.user = null
         state.token = null
         state.isAuthenticated = false
@@ -47,6 +48,7 @@ const slice = createSlice({
         state.token = action.payload.token
         state.isAuthenticated = true
         state.error = null
+        setUser(action.payload)
       })
       .addMatcher(authApi.endpoints.login.matchRejected, (state, action) => {
         state.user = null
@@ -61,4 +63,4 @@ export default slice.reducer
 export const { logout } = slice.actions
 
 export const selectIsAuthenticated = (state: RootState) =>
-  state.auth.isAuthenticated
+  state.authSlice.isAuthenticated

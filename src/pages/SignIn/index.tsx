@@ -7,6 +7,8 @@ import { ILoginRequest, useLoginMutation } from '../../services/auth'
 import { useAppSelector } from '../../store/hooks';
 import { setToken } from '../../helpers/storage';
 import { Banner, Header, SignInContainer } from './styles'
+import { useDispatch } from 'react-redux';
+import { logout } from '../../features/auth/authSlice';
 
 export const SignIn = () => {
   const navigate = useNavigate();
@@ -14,8 +16,9 @@ export const SignIn = () => {
   const { Paragraph, Title } = Typography;
   const [login, { isLoading }] = useLoginMutation()
   const [messageApi, contextHolder] = message.useMessage();
-  const { token, error } = useAppSelector(state => state.auth)
+  const { token, error } = useAppSelector(state => state.authSlice)
   const from = location.state?.from?.pathname || "/";
+  const dispatch = useDispatch()
 
   const onFinish = async (values: ILoginRequest) => {
     await login(values).unwrap()
@@ -34,6 +37,7 @@ export const SignIn = () => {
         type: 'error',
         content: 'Usuário ou senha inválido',
       });
+      dispatch(logout())
     }
   }, [error, messageApi])
 

@@ -1,7 +1,10 @@
 import { configureStore, ConfigureStoreOptions } from '@reduxjs/toolkit'
 
-import auth from '../features/auth/authSlice'
+import authSlice from '../features/auth/authSlice'
+import createUserSlice from '../features/user/createUserSlice'
+import getUserSlice from '../features/user/getUserSlice'
 import { authApi } from '../services/auth'
+import { userApi } from '../services/user'
 
 export const createStore = (
   options?: ConfigureStoreOptions['preloadedState'] | undefined
@@ -9,10 +12,13 @@ export const createStore = (
   configureStore({
     reducer: {
       [authApi.reducerPath]: authApi.reducer,
-      auth,
+      [userApi.reducerPath]: userApi.reducer,
+      authSlice,
+      createUserSlice,
+      getUserSlice,
     },
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(authApi.middleware),
+      getDefaultMiddleware().concat(userApi.middleware),
     ...options,
   })
 

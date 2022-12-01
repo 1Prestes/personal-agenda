@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   GroupOutlined,
   LogoutOutlined,
@@ -10,8 +10,11 @@ import { MenuProps } from 'antd';
 import { Breadcrumb, Layout, Menu } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { logout } from '../../features/auth/authSlice';
+import { getUserIdByToken } from '../../helpers/jwt';
+import { useGetUserMutation } from '../../services/user';
+import { Schedule } from './Calendar';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -22,33 +25,40 @@ function getItem(
   key: React.Key,
   icon?: React.ReactNode,
   children?: MenuItem[],
-  ): MenuItem {
-    return {
-      key,
-      icon,
-      children,
-      label,
-    } as MenuItem;
-  }
-
-  const items: MenuItem[] = [
-    getItem('Usuário 1', '1', <UserOutlined />),
-    getItem('Grupos', '2', <GroupOutlined />),
-    getItem('Eventos', 'sub1', <ScheduleOutlined />, [
-      getItem('Listar', '3'),
-      getItem('Novo', '4'),
-  ]),
-  getItem('Contatos', 'sub2', <TeamOutlined />, [
-    getItem('Listar', '6'),
-    getItem('Novo', '8')
-  ]),
-  getItem('Sair', 'logout', <LogoutOutlined />,),
-];
+): MenuItem {
+  return {
+    key,
+    icon,
+    children,
+    label,
+  } as MenuItem;
+}
 
 export const Home: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const dispatch = useAppDispatch()
-  let navigate = useNavigate();
+  const navigate = useNavigate();
+  const user = useAppSelector(state => state.getUserSlice.user)
+  const [getUser, { isLoading }] = useGetUserMutation();
+
+  const loadData = async () => {
+    if (!user) {
+      const iduser = getUserIdByToken();
+      await getUser(iduser).unwrap()
+    }
+  }
+
+  useEffect(() => {
+    loadData()
+  }, [])
+
+  const items: MenuItem[] = [
+    getItem(user?.name.split(' ')[0] || '', '1', <UserOutlined />),
+    getItem('Eventos', 'events', <ScheduleOutlined />,),
+    getItem('Grupos', 'groups', <GroupOutlined />),
+    getItem('Contatos', 'contacts', <TeamOutlined />,),
+    getItem('Sair', 'logout', <LogoutOutlined />,),
+  ];
 
   const onClick: MenuProps['onClick'] = (e) => {
     if (e.key === 'logout') {
@@ -77,6 +87,7 @@ export const Home: React.FC = () => {
           </Breadcrumb>
           <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
             Home page
+            <Schedule />
           </div>
         </Content>
         <Footer style={{ textAlign: 'center' }}> IFSP {new Date().getFullYear()} all rights reserved </Footer>

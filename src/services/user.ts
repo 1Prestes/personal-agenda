@@ -1,24 +1,25 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-
 import { RootState } from '../store/store'
 
 export interface IUserResponse {
-	iduser: string
-	name: string
-	username: string
-	birthDate: Date
-	address: string
-	createdAt: Date
-	updatedAt: Date
-	token: string
+  iduser: string
+  name: string
+  username: string
+  address: string
+  birth_date: string
+  updatedAt: string
+  createdAt: string
 }
 
-export interface ILoginRequest {
+export interface IUserRequest {
+  name: string
   username: string
   password: string
+  address: string
+  birthDate: string
 }
 
-export const authApi = createApi({
+export const userApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: 'http://localhost:4005/local/v1/schedule/',
     prepareHeaders: (headers, { getState }) => {
@@ -32,18 +33,27 @@ export const authApi = createApi({
       return headers
     },
   }),
+  tagTypes: ['User'],
   endpoints: (builder) => ({
-    login: builder.mutation<IUserResponse, ILoginRequest>({
+    createUser: builder.mutation<IUserResponse, IUserRequest>({
       query: (credentials) => ({
-        url: '/sign-in',
+        url: '/user',
         method: 'POST',
         body: credentials,
+      }),
+    }),
+    getUser: builder.mutation<IUserResponse, string>({
+      query: (iduser: string) => ({
+        url: `/user/${iduser}`,
+        method: 'GET',
       }),
     }),
     protected: builder.mutation<{ message: string }, void>({
       query: () => 'protected',
     }),
+
+
   }),
 })
 
-export const { useLoginMutation, useProtectedMutation } = authApi
+export const { useCreateUserMutation, useGetUserMutation, useProtectedMutation } = userApi
