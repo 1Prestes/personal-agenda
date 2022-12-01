@@ -6,6 +6,7 @@ import { SignIn } from './pages/SignIn';
 import { Home } from "./pages/Home";
 import { PrivateRoute } from "./PrivateRoute";
 import { PublicRoute } from "./PublicRoute";
+import { SignUp } from "./pages/SignUp";
 
 export const Router = createBrowserRouter([
   {
@@ -13,6 +14,14 @@ export const Router = createBrowserRouter([
     element: (
       <PublicRoute>
         <SignIn />
+      </PublicRoute>
+    ),
+  },
+  {
+    path: "/inscrever-se",
+    element: (
+      <PublicRoute>
+        <SignUp />
       </PublicRoute>
     ),
   },

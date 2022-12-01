@@ -87,7 +87,7 @@ export const SignIn = () => {
               </Form.Item>
             </Form>
 
-            <Typography>Não tem uma conta? <Link to={'/'}>Inscrever-se</Link></Typography>
+            <Typography>Não tem uma conta? <Link to={'/inscrever-se'}>Inscrever-se</Link></Typography>
 
           </Col>
         </SignInContainer>
