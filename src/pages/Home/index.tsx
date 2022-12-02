@@ -15,6 +15,7 @@ import { logout } from '../../features/auth/authSlice';
 import { getUserIdByToken } from '../../helpers/jwt';
 import { useGetUserMutation } from '../../services/user';
 import { Schedule } from './Calendar';
+import { useListEventsMutation } from '../../services/events';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -39,18 +40,32 @@ export const Home: React.FC = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate();
   const user = useAppSelector(state => state.getUserSlice.user)
+  const events = useAppSelector(state => state.listEventsSlice.events)
   const [getUser, { isLoading }] = useGetUserMutation();
+  const [listEvents, { isLoading: isListEventsLoading }] = useListEventsMutation();
 
   const loadData = async () => {
-    if (!user) {
-      const iduser = getUserIdByToken();
-      await getUser(iduser).unwrap()
+    const iduser = getUserIdByToken();
+
+    try {
+      await listEvents(iduser).unwrap()
+
+      if (!user) {
+        await getUser(iduser).unwrap()
+      }
+
+    } catch (error) {
+      console.log('deu ruim ', error)
     }
   }
 
   useEffect(() => {
     loadData()
   }, [])
+
+  useEffect(() => {
+    console.log('listEventsLoading ', isListEventsLoading);
+  }, [isListEventsLoading])
 
   const items: MenuItem[] = [
     getItem(user?.name.split(' ')[0] || '', '1', <UserOutlined />),

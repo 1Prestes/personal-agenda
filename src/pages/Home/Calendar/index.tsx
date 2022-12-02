@@ -9,21 +9,14 @@ import { FieldTimeOutlined } from '@ant-design/icons'
 
 import { EventModalProps } from '../EventModal';
 import { Cell, EventCard, EventLine, EventsContainer } from './styles';
+import { useAppSelector } from '../../../store/hooks';
+import { IEvent } from '../../../services/events';
 
-
-export interface IEvent {
-  type: string
-  title: string
-  description: string
-  initial_date: string
-  final_date: string
-  place: string
-}
 
 const getListData = (value: Dayjs) => {
   let listData;
   switch (value.date()) {
-    case 1:
+    case 2:
       listData = [
         { type: 'warning', title: 'This is warning event.', description: 'Role com a trupe para capturar a esfera de 5 estrelas.', initial_date: "2022-12-26T01:36:22.194Z", final_date: "2022-12-27T01:37:22.194Z", place: "Google meet" },
         { type: 'success', title: 'This is usual event.', description: 'Role com a trupe para capturar a esfera de 5 estrelas.', initial_date: "2022-12-26T01:36:22.194Z", final_date: "2022-12-27T01:37:22.194Z", place: "Google meet" },
@@ -70,6 +63,7 @@ export const Schedule: React.FC = () => {
   const [eventSelected, setEventSelected] = useState<IEvent>();
   const [value, setValue] = useState(() => dayjs());
   const [selectedValue, setSelectedValue] = useState(() => dayjs());
+  const events = useAppSelector(state => state.listEventsSlice.events)
 
   const { Title } = Typography
 
@@ -97,15 +91,16 @@ export const Schedule: React.FC = () => {
     setIsEventModalOpen(true)
   }
 
+
   const dateCellRender = (value: Dayjs) => {
-    const listData: IEvent[] = getListData(value);
     return (
-      <Cell onClick={() => console.log('celular')} className="events">
-        {listData.map((event) => (
-          <EventLine onClick={() => handleEventClicked(event)} key={event.title}>
-            <Badge status={event.type as BadgeProps['status']} text={event.title} />
-          </EventLine>
-        ))}
+      <Cell className="events">
+        {events?.filter(event => dayjs(event.initial_date).format('YYYY-MM-DD') === dayjs(value).format('YYYY-MM-DD'))
+          .map((event) => (
+            <EventLine onClick={() => handleEventClicked(event)} key={event?.title}>
+              <Badge status={'success' as BadgeProps['status']} text={event?.title} />
+            </EventLine>
+          ))}
       </Cell>
     );
   };
@@ -132,20 +127,23 @@ export const Schedule: React.FC = () => {
           height: '100vh',
         }}>
           {
-            getListData(dayjs()).map(event => <EventCard>
-              <Descriptions.Item>
-                <FieldTimeOutlined /> {dayjs(eventSelected?.initial_date).format('HH:mm')} - {dayjs(event?.final_date).format('HH:mm')}</Descriptions.Item>
-              <Descriptions
-                title={<Typography style={{
-                  whiteSpace: 'normal'
-                }}>
-                  {event?.title}
-                </Typography>
-                }>
-                <Descriptions.Item>{event?.description}</Descriptions.Item>
-              </Descriptions>
-              <Descriptions.Item>Local: {event?.place}</Descriptions.Item>
-            </EventCard>)
+            events?.filter(event =>
+              dayjs(event.initial_date).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD')
+            )
+              .map(event => <EventCard key={event.idevent}>
+                <Descriptions.Item>
+                  <FieldTimeOutlined /> {dayjs(eventSelected?.initial_date).format('HH:mm')} - {dayjs(event?.final_date).format('HH:mm')}</Descriptions.Item>
+                <Descriptions
+                  title={<Typography style={{
+                    whiteSpace: 'normal'
+                  }}>
+                    {event?.title}
+                  </Typography>
+                  }>
+                  <Descriptions.Item>{event?.description}</Descriptions.Item>
+                </Descriptions>
+                <Descriptions.Item>Local: {event?.place}</Descriptions.Item>
+              </EventCard>)
           }
         </div>
       </EventsContainer>

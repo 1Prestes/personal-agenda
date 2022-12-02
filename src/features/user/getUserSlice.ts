@@ -25,7 +25,6 @@ const getUserSlice = createSlice({
       state.error = null
     },
     setUser: (state, action) => {
-      console.log('estou aca ', action.payload)
       state.user = action.payload
     },
   },

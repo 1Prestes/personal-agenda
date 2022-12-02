@@ -4,7 +4,7 @@ import { FieldTimeOutlined, EditOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs';
 import 'dayjs/locale/pt-br';
 
-import { IEvent } from '../Calendar';
+import { IEvent } from '../../../services/events';
 import { BorderType, ModalContainer } from './styles';
 
 interface IEventModalProps {

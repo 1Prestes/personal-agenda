@@ -23,7 +23,7 @@ export const userApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: 'http://localhost:4005/local/v1/schedule/',
     prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).authSlice.token
+      const token = (getState() as RootState).authSlice?.token
       headers.set('Content-Type', 'application/json')
 
       if (token) {
@@ -43,7 +43,7 @@ export const userApi = createApi({
       }),
     }),
     getUser: builder.mutation<IUserResponse, string>({
-      query: (iduser: string) => ({
+      query: (iduser) => ({
         url: `/user/${iduser}`,
         method: 'GET',
       }),

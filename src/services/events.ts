@@ -2,23 +2,22 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
 import { RootState } from '../store/store'
 
-export interface IUserResponse {
+export interface IEvent {
+	idevent: string
+	title: string
+	description: string
+	initial_date: Date
+	final_date: Date
+	place: string
 	iduser: string
-	name: string
-	username: string
-	birthDate: Date
-	address: string
-	createdAt: Date
-	updatedAt: Date
-	token: string
 }
 
-export interface ILoginRequest {
-  username: string
-  password: string
+export interface IEventResponse {
+	count: number
+	rows: IEvent[]
 }
 
-export const authApi = createApi({
+export const eventApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: 'http://localhost:4005/local/v1/schedule/',
     prepareHeaders: (headers, { getState }) => {
@@ -33,11 +32,10 @@ export const authApi = createApi({
     },
   }),
   endpoints: (builder) => ({
-    login: builder.mutation<IUserResponse, ILoginRequest>({
-      query: (credentials) => ({
-        url: '/sign-in',
-        method: 'POST',
-        body: credentials,
+    listEvents: builder.mutation<IEventResponse, string>({
+      query: (iduser) => ({
+        url: `/user/${iduser}/events`,
+        method: 'GET',
       }),
     }),
     protected: builder.mutation<{ message: string }, void>({
@@ -46,4 +44,4 @@ export const authApi = createApi({
   }),
 })
 
-export const { useLoginMutation, useProtectedMutation } = authApi
+export const { useListEventsMutation, useProtectedMutation } = eventApi
