@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { BadgeProps, Descriptions, Typography } from 'antd';
-import { Badge, Calendar } from 'antd';
+import { Badge, BadgeProps, Calendar, Descriptions, Typography } from 'antd';
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import 'dayjs/locale/pt-br';
@@ -11,46 +10,6 @@ import { EventModalProps } from '../EventModal';
 import { Cell, EventCard, EventLine, EventsContainer } from './styles';
 import { useAppSelector } from '../../../store/hooks';
 import { IEvent } from '../../../services/events';
-
-
-const getListData = (value: Dayjs) => {
-  let listData;
-  switch (value.date()) {
-    case 2:
-      listData = [
-        { type: 'warning', title: 'This is warning event.', description: 'Role com a trupe para capturar a esfera de 5 estrelas.', initial_date: "2022-12-26T01:36:22.194Z", final_date: "2022-12-27T01:37:22.194Z", place: "Google meet" },
-        { type: 'success', title: 'This is usual event.', description: 'Role com a trupe para capturar a esfera de 5 estrelas.', initial_date: "2022-12-26T01:36:22.194Z", final_date: "2022-12-27T01:37:22.194Z", place: "Google meet" },
-        { type: 'success', title: 'This is usual event.', description: 'Role com a trupe para capturar a esfera de 5 estrelas.', initial_date: "2022-12-26T01:36:22.194Z", final_date: "2022-12-27T01:37:22.194Z", place: "Google meet" },
-        { type: 'success', title: 'This is usual event.', description: 'Role com a trupe para capturar a esfera de 5 estrelas.', initial_date: "2022-12-26T01:36:22.194Z", final_date: "2022-12-27T01:37:22.194Z", place: "Google meet" },
-        { type: 'success', title: 'This is usual event.', description: 'Role com a trupe para capturar a esfera de 5 estrelas.', initial_date: "2022-12-26T01:36:22.194Z", final_date: "2022-12-27T01:37:22.194Z", place: "Google meet" },
-        { type: 'success', title: 'This is usual event.', description: 'Role com a trupe para capturar a esfera de 5 estrelas.', initial_date: "2022-12-26T01:36:22.194Z", final_date: "2022-12-27T01:37:22.194Z", place: "Google meet" },
-        { type: 'success', title: 'This is usual event.', description: 'Role com a trupe para capturar a esfera de 5 estrelas.', initial_date: "2022-12-26T01:36:22.194Z", final_date: "2022-12-27T01:37:22.194Z", place: "Google meet" },
-        { type: 'success', title: 'This is usual event.', description: 'Role com a trupe para capturar a esfera de 5 estrelas.', initial_date: "2022-12-26T01:36:22.194Z", final_date: "2022-12-27T01:37:22.194Z", place: "Google meet" },
-        { type: 'success', title: 'This is usual event.', description: 'Role com a trupe para capturar a esfera de 5 estrelas.', initial_date: "2022-12-26T01:36:22.194Z", final_date: "2022-12-27T01:37:22.194Z", place: "Google meet" },
-        { type: 'success', title: 'This is usual event.', description: 'Role com a trupe para capturar a esfera de 5 estrelas.', initial_date: "2022-12-26T01:36:22.194Z", final_date: "2022-12-27T01:37:22.194Z", place: "Google meet" },
-      ];
-      break;
-    case 10:
-      listData = [
-        { type: 'warning', title: 'This is warning event.', description: 'Role com a trupe para capturar a esfera de 5 estrelas.', initial_date: "2022-12-26T01:36:22.194Z", final_date: "2022-12-27T01:37:22.194Z", place: "Google meet" },
-        { type: 'success', title: 'This is usual event.', description: 'Role com a trupe para capturar a esfera de 5 estrelas.', initial_date: "2022-12-26T01:36:22.194Z", final_date: "2022-12-27T01:37:22.194Z", place: "Google meet" },
-        { type: 'error', title: 'This is error event.', description: 'Role com a trupe para capturar a esfera de 5 estrelas.', initial_date: "2022-12-26T01:36:22.194Z", final_date: "2022-12-27T01:37:22.194Z", place: "Google meet" },
-      ];
-      break;
-    case 15:
-      listData = [
-        { type: 'warning', title: 'This is warning event', description: 'Role com a trupe para capturar a esfera de 5 estrelas.', initial_date: "2022-12-26T01:36:22.194Z", final_date: "2022-12-27T01:37:22.194Z", place: "Google meet" },
-        { type: 'success', title: 'This is very long usual event。。....', description: 'Role com a trupe para capturar a esfera de 5 estrelas.', initial_date: "2022-12-26T01:36:22.194Z", final_date: "2022-12-27T01:37:22.194Z", place: "Google meet" },
-        { type: 'error', title: 'This is error event 1.', description: 'Role com a trupe para capturar a esfera de 5 estrelas.', initial_date: "2022-12-26T01:36:22.194Z", final_date: "2022-12-27T01:37:22.194Z", place: "Google meet" },
-        { type: 'error', title: 'This is error event 2.', description: 'Role com a trupe para capturar a esfera de 5 estrelas.', initial_date: "2022-12-26T01:36:22.194Z", final_date: "2022-12-27T01:37:22.194Z", place: "Google meet" },
-        { type: 'error', title: 'This is error event 3.', description: 'Role com a trupe para capturar a esfera de 5 estrelas.', initial_date: "2022-12-26T01:36:22.194Z", final_date: "2022-12-27T01:37:22.194Z", place: "Google meet" },
-        { type: 'error', title: 'This is error event 4.', description: 'Role com a trupe para capturar a esfera de 5 estrelas.', initial_date: "2022-12-26T01:36:22.194Z", final_date: "2022-12-27T01:37:22.194Z", place: "Google meet" },
-      ];
-      break;
-    default:
-  }
-  return listData || [];
-};
 
 const getMonthData = (value: Dayjs) => {
   if (value.month() === 8) {
@@ -70,6 +29,7 @@ export const Schedule: React.FC = () => {
   const onSelect = (newValue: Dayjs) => {
     setValue(newValue);
     setSelectedValue(newValue);
+    console.log('newValue ', newValue)
   };
 
   const onPanelChange = (newValue: Dayjs) => {

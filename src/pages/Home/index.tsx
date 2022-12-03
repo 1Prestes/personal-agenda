@@ -39,21 +39,19 @@ export const Home: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const dispatch = useAppDispatch()
   const navigate = useNavigate();
+  const [getUser] = useGetUserMutation();
+  const [listEvents] = useListEventsMutation();
   const user = useAppSelector(state => state.getUserSlice.user)
-  const events = useAppSelector(state => state.listEventsSlice.events)
-  const [getUser, { isLoading }] = useGetUserMutation();
-  const [listEvents, { isLoading: isListEventsLoading }] = useListEventsMutation();
 
   const loadData = async () => {
     const iduser = getUserIdByToken();
 
     try {
-      await listEvents(iduser).unwrap()
-
       if (!user) {
         await getUser(iduser).unwrap()
       }
 
+      await listEvents(iduser).unwrap()
     } catch (error) {
       console.log('deu ruim ', error)
     }
@@ -62,10 +60,6 @@ export const Home: React.FC = () => {
   useEffect(() => {
     loadData()
   }, [])
-
-  useEffect(() => {
-    console.log('listEventsLoading ', isListEventsLoading);
-  }, [isListEventsLoading])
 
   const items: MenuItem[] = [
     getItem(user?.name.split(' ')[0] || '', '1', <UserOutlined />),

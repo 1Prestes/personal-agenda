@@ -1,6 +1,4 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-
-import { RootState } from '../store/store'
+import { api } from './api'
 
 export interface IUserResponse {
 	iduser: string
@@ -18,20 +16,7 @@ export interface ILoginRequest {
   password: string
 }
 
-export const authApi = createApi({
-  baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:4005/local/v1/schedule/',
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).authSlice?.token
-      headers.set('Content-Type', 'application/json')
-
-      if (token) {
-        headers.set('authorization', `Bearer ${token}`)
-      }
-
-      return headers
-    },
-  }),
+export const authApi = api.injectEndpoints({
   endpoints: (builder) => ({
     login: builder.mutation<IUserResponse, ILoginRequest>({
       query: (credentials) => ({
@@ -44,6 +29,7 @@ export const authApi = createApi({
       query: () => 'protected',
     }),
   }),
+  overrideExisting: false,
 })
 
 export const { useLoginMutation, useProtectedMutation } = authApi

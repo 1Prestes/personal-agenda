@@ -1,36 +1,21 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-
-import { RootState } from '../store/store'
+import { api } from './api'
 
 export interface IEvent {
-	idevent: string
-	title: string
-	description: string
-	initial_date: Date
-	final_date: Date
-	place: string
-	iduser: string
+  idevent: string
+  title: string
+  description: string
+  initial_date: Date
+  final_date: Date
+  place: string
+  iduser: string
 }
 
 export interface IEventResponse {
-	count: number
-	rows: IEvent[]
+  count: number
+  rows: IEvent[]
 }
 
-export const eventApi = createApi({
-  baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:4005/local/v1/schedule/',
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).authSlice?.token
-      headers.set('Content-Type', 'application/json')
-
-      if (token) {
-        headers.set('authorization', `Bearer ${token}`)
-      }
-
-      return headers
-    },
-  }),
+export const eventApi = api.injectEndpoints({
   endpoints: (builder) => ({
     listEvents: builder.mutation<IEventResponse, string>({
       query: (iduser) => ({
@@ -42,6 +27,7 @@ export const eventApi = createApi({
       query: () => 'protected',
     }),
   }),
+  overrideExisting: false,
 })
 
 export const { useListEventsMutation, useProtectedMutation } = eventApi

@@ -4,25 +4,21 @@ import authSlice from '../features/auth/authSlice'
 import createUserSlice from '../features/user/createUserSlice'
 import getUserSlice from '../features/user/getUserSlice'
 import listEventsSlice from '../features/events/listEventSlice'
-import { authApi } from '../services/auth'
-import { userApi } from '../services/user'
-import { eventApi } from '../services/events'
+import { api } from '../services/api'
 
 export const createStore = (
   options?: ConfigureStoreOptions['preloadedState'] | undefined
 ) =>
   configureStore({
     reducer: {
-      [authApi.reducerPath]: authApi.reducer,
-      [userApi.reducerPath]: userApi.reducer,
-      [eventApi.reducerPath]: eventApi.reducer,
+      [api.reducerPath]: api.reducer,
       authSlice,
       createUserSlice,
       getUserSlice,
       listEventsSlice,
     },
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(eventApi.middleware),
+      getDefaultMiddleware().concat(api.middleware),
     ...options,
   })
 
