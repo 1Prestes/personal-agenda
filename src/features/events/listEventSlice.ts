@@ -3,10 +3,10 @@ import { createSlice } from '@reduxjs/toolkit'
 import { eventApi, IEvent } from '../../services/events';
 
 const initialState = {
-  events: null,
+  events: [],
   count: null
 } as {
-  events: null | IEvent[]
+  events: [] | IEvent[]
   count: null | number
 }
 
@@ -16,14 +16,14 @@ const listEventsSlice = createSlice({
   reducers: {
     clearEvents: (state) => {
       state.count = null
-      state.events = null
+      state.events = []
     },
   },
   extraReducers: (builder) => {
     builder
       .addMatcher(eventApi.endpoints.listEvents.matchPending, (state, action) => {
         state.count = null
-        state.events = null
+        state.events = []
       })
       .addMatcher(eventApi.endpoints.listEvents.matchFulfilled, (state, action) => {
         state.count = action.payload?.count
@@ -31,7 +31,7 @@ const listEventsSlice = createSlice({
       })
       .addMatcher(eventApi.endpoints.listEvents.matchRejected, (state, action) => {
         state.count = null
-        state.events = null
+        state.events = []
       })
   },
 })

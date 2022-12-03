@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { Badge, BadgeProps, Calendar, Descriptions, Typography } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Badge, BadgeProps, Calendar, List, Typography } from 'antd';
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import 'dayjs/locale/pt-br';
 import locale from 'antd/es/date-picker/locale/pt_BR';
-import { FieldTimeOutlined } from '@ant-design/icons'
 
+import { IEvent, useListEventsMutation } from '../../../services/events';
 import { EventModalProps } from '../EventModal';
-import { Cell, EventCard, EventLine, EventsContainer } from './styles';
 import { useAppSelector } from '../../../store/hooks';
-import { IEvent } from '../../../services/events';
+import { getUserIdByToken } from '../../../helpers/jwt';
+import { Cell, EventLine, EventsContainer } from './styles';
 
 const getMonthData = (value: Dayjs) => {
   if (value.month() === 8) {
@@ -21,15 +21,24 @@ export const Schedule: React.FC = () => {
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
   const [eventSelected, setEventSelected] = useState<IEvent>();
   const [value, setValue] = useState(() => dayjs());
-  const [selectedValue, setSelectedValue] = useState(() => dayjs());
   const events = useAppSelector(state => state.listEventsSlice.events)
+  const [todaysEvents, setTodaysEvents] = useState<IEvent[]>()
+  const [listEvents, { isLoading }] = useListEventsMutation();
 
   const { Title } = Typography
 
+  const loadEvents = async () => {
+    const iduser = getUserIdByToken();
+
+    await listEvents(iduser).unwrap()
+  }
+
+  useEffect(() => {
+    loadEvents()
+  }, [])
+
   const onSelect = (newValue: Dayjs) => {
     setValue(newValue);
-    setSelectedValue(newValue);
-    console.log('newValue ', newValue)
   };
 
   const onPanelChange = (newValue: Dayjs) => {
@@ -51,13 +60,23 @@ export const Schedule: React.FC = () => {
     setIsEventModalOpen(true)
   }
 
+  useEffect(() => {
+    if (events) {
+      const eventsFiltered = events?.filter(event =>
+        dayjs(event.initial_date).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD')
+      )
+
+      setTodaysEvents(eventsFiltered)
+    }
+  }, [events])
+
 
   const dateCellRender = (value: Dayjs) => {
     return (
       <Cell className="events">
         {events?.filter(event => dayjs(event.initial_date).format('YYYY-MM-DD') === dayjs(value).format('YYYY-MM-DD'))
           .map((event) => (
-            <EventLine onClick={() => handleEventClicked(event)} key={event?.title}>
+            <EventLine onClick={() => handleEventClicked(event)} key={event?.idevent}>
               <Badge status={'success' as BadgeProps['status']} text={event?.title} />
             </EventLine>
           ))}
@@ -86,25 +105,22 @@ export const Schedule: React.FC = () => {
           overflow: 'auto',
           height: '100vh',
         }}>
-          {
-            events?.filter(event =>
-              dayjs(event.initial_date).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD')
-            )
-              .map(event => <EventCard key={event.idevent}>
-                <Descriptions.Item>
-                  <FieldTimeOutlined /> {dayjs(eventSelected?.initial_date).format('HH:mm')} - {dayjs(event?.final_date).format('HH:mm')}</Descriptions.Item>
-                <Descriptions
-                  title={<Typography style={{
-                    whiteSpace: 'normal'
-                  }}>
-                    {event?.title}
-                  </Typography>
-                  }>
-                  <Descriptions.Item>{event?.description}</Descriptions.Item>
-                </Descriptions>
-                <Descriptions.Item>Local: {event?.place}</Descriptions.Item>
-              </EventCard>)
-          }
+          <List
+            style={{
+              cursor: 'pointer',
+            }}
+            itemLayout="horizontal"
+            dataSource={todaysEvents}
+            loading={isLoading}
+            renderItem={(event) => (
+              <List.Item key={event.idevent}>
+                <List.Item.Meta
+                  title={event.title}
+                  description={event.description}
+                />
+              </List.Item>
+            )}
+          />
         </div>
       </EventsContainer>
     </div>

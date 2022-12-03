@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   GroupOutlined,
   LogoutOutlined,
@@ -6,9 +7,7 @@ import {
   TeamOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { MenuProps } from 'antd';
-import { Breadcrumb, Layout, Menu } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { Avatar, Breadcrumb, Layout, List, Menu, MenuProps } from 'antd';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { logout } from '../../features/auth/authSlice';
@@ -40,7 +39,6 @@ export const Home: React.FC = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate();
   const [getUser] = useGetUserMutation();
-  const [listEvents] = useListEventsMutation();
   const user = useAppSelector(state => state.getUserSlice.user)
 
   const loadData = async () => {
@@ -51,7 +49,6 @@ export const Home: React.FC = () => {
         await getUser(iduser).unwrap()
       }
 
-      await listEvents(iduser).unwrap()
     } catch (error) {
       console.log('deu ruim ', error)
     }
