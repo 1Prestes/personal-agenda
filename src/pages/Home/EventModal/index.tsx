@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button, Descriptions, Modal, Typography } from 'antd';
-import { FieldTimeOutlined, EditOutlined } from '@ant-design/icons'
+import { Descriptions, Modal, Typography } from 'antd';
+import { FieldTimeOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs';
 import 'dayjs/locale/pt-br';
 

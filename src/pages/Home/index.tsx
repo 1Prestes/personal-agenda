@@ -1,40 +1,55 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { Breadcrumb, Layout, Menu, MenuProps } from 'antd';
 import {
   GroupOutlined,
   LogoutOutlined,
   ScheduleOutlined,
   TeamOutlined,
   UserOutlined,
+  HomeOutlined,
 } from '@ant-design/icons';
-import { Avatar, Breadcrumb, Layout, List, Menu, MenuProps } from 'antd';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { logout } from '../../features/auth/authSlice';
 import { getUserIdByToken } from '../../helpers/jwt';
 import { useGetUserMutation } from '../../services/user';
-import { Schedule } from './Calendar';
-import { useListEventsMutation } from '../../services/events';
 
 const { Header, Content, Footer, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
 
-function getItem(
+
+interface IMenuItem {
   label: React.ReactNode,
   key: React.Key,
   icon?: React.ReactNode,
+  onClick?: () => void,
   children?: MenuItem[],
+}
+
+function getItem({
+  label,
+  key,
+  icon,
+  onClick,
+  children,
+}: IMenuItem
 ): MenuItem {
   return {
     key,
     icon,
     children,
+    onClick,
     label,
   } as MenuItem;
 }
 
-export const Home: React.FC = () => {
+interface IProps {
+  children: JSX.Element
+}
+
+export const Home: React.FC<IProps> = ({ children }: IProps) => {
   const [collapsed, setCollapsed] = useState(false);
   const dispatch = useAppDispatch()
   const navigate = useNavigate();
@@ -58,12 +73,30 @@ export const Home: React.FC = () => {
     loadData()
   }, [])
 
+  const onLogout = () => {
+    dispatch(logout())
+    navigate('/')
+  }
+
   const items: MenuItem[] = [
-    getItem(user?.name.split(' ')[0] || '', '1', <UserOutlined />),
-    getItem('Eventos', 'events', <ScheduleOutlined />,),
-    getItem('Grupos', 'groups', <GroupOutlined />),
-    getItem('Contatos', 'contacts', <TeamOutlined />,),
-    getItem('Sair', 'logout', <LogoutOutlined />,),
+    getItem({
+      label: user?.name.split(' ')[0] || '',
+      key: 'user',
+      icon: <UserOutlined />
+    }),
+    getItem({
+      label: <Link to={'/home'}>Home</Link>,
+      key: 'home',
+      icon: <HomeOutlined />
+    }),
+    getItem({
+      label: <Link to={'/events'}>Eventos</Link>,
+      key: 'events',
+      icon: <ScheduleOutlined />,
+    }),
+    getItem({ label: 'Grupos', key: 'groups', icon: <GroupOutlined /> }),
+    getItem({ label: 'Contatos', key: 'contacts', icon: <TeamOutlined /> }),
+    getItem({ label: 'Sair', key: 'logout', icon: <LogoutOutlined />, onClick: onLogout }),
   ];
 
   const onClick: MenuProps['onClick'] = (e) => {
@@ -79,7 +112,7 @@ export const Home: React.FC = () => {
         <div className="logo" />
         <Menu
           theme="dark"
-          defaultSelectedKeys={['1']}
+          defaultSelectedKeys={['home']}
           mode="inline"
           items={items}
           onClick={onClick}
@@ -92,7 +125,7 @@ export const Home: React.FC = () => {
             <Breadcrumb.Item>Home </Breadcrumb.Item>
           </Breadcrumb>
           <div className="site-layout-background" style={{ minHeight: 360 }}>
-            <Schedule />
+            {children}
           </div>
         </Content>
         <Footer style={{ textAlign: 'center' }}> IFSP {new Date().getFullYear()} all rights reserved </Footer>
