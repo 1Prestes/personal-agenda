@@ -4,6 +4,7 @@ import authSlice from '../features/auth/authSlice'
 import createUserSlice from '../features/user/createUserSlice'
 import getUserSlice from '../features/user/getUserSlice'
 import listEventsSlice from '../features/events/listEventSlice'
+import deleteEventSlice from '../features/events/deleteEventSlice'
 import { api } from '../services/api'
 
 export const createStore = (
@@ -16,6 +17,7 @@ export const createStore = (
       createUserSlice,
       getUserSlice,
       listEventsSlice,
+      deleteEventSlice,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat(api.middleware),
