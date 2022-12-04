@@ -24,20 +24,20 @@ export const userApi = api.injectEndpoints({
       query: (credentials) => ({
         url: '/user',
         method: 'POST',
-        body: credentials,
-      }),
+        body: credentials
+      })
     }),
     getUser: builder.mutation<IUserResponse, string>({
       query: (iduser) => ({
         url: `/user/${iduser}`,
-        method: 'GET',
-      }),
+        method: 'GET'
+      })
     }),
-    protected: builder.mutation<{ message: string }, void>({
-      query: () => 'protected',
-    }),
+    protected: builder.mutation<{ message: string }, null>({
+      query: () => 'protected'
+    })
   }),
-  overrideExisting: false,
+  overrideExisting: false
 })
 
 export const { useCreateUserMutation, useGetUserMutation, useProtectedMutation } = userApi

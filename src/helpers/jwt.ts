@@ -1,18 +1,18 @@
-import { getToken } from "./storage";
+import { getToken } from './storage'
 
-export const getUserIdByToken = () => {
+export const getUserIdByToken = (): string | null => {
   const token = getToken()
 
-  if (!token) return null;
+  if (token === undefined) return null
 
   try {
-    const [, payload] = token.split('.');
-    const data = JSON.parse(atob(payload));
+    const [, payload] = token.split('.')
+    const data = JSON.parse(atob(payload))
 
-    return data?.iduser;
+    return data?.iduser
   } catch (error) {
     console.log('GetUserIdByToken::error => ', error)
 
-    return null;
+    return null
   }
 }

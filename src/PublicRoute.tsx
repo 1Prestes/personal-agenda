@@ -1,14 +1,15 @@
-import { Navigate, useLocation } from "react-router-dom";
+import React from 'react'
+import { Navigate, useLocation } from 'react-router-dom'
 
-import { getToken } from "./helpers/storage";
+import { getToken } from './helpers/storage'
 
-export const PublicRoute = ({ children }: { children: JSX.Element }) => {
-  const token = getToken();
-  const location = useLocation();
+export const PublicRoute = ({ children }: { children: JSX.Element }): JSX.Element => {
+  const token = getToken()
+  const location = useLocation()
 
   if (token) {
-    return <Navigate to="/home" state={{ from: location }} replace />;
+    return <Navigate to="/home" state={{ from: location }} replace />
   }
 
-  return children;
+  return children
 }

@@ -1,20 +1,22 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-import { userApi, IUserResponse } from '../../services/user';
-import { setUser } from './getUserSlice';
+import { userApi, IUserResponse } from '../../services/user'
+import { setUser } from './getUserSlice'
 
 interface IError {
   code: string
-  message: string,
+  message: string
   shortMessage: string
 }
 
-const initialState = {
+interface IInitialState {
+  user: null | IUserResponse
+  error: IError | null
+}
+
+const initialState: IInitialState = {
   user: null,
-  error: null,
-} as {
-  user: null | IUserResponse;
-  error: IError | null;
+  error: null
 }
 
 const createUserSlice = createSlice({
@@ -24,7 +26,7 @@ const createUserSlice = createSlice({
     clearCreateUser: (state) => {
       state.user = null
       state.error = null
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -42,7 +44,7 @@ const createUserSlice = createSlice({
         state.user = null
         state.error = action.payload?.data as IError
       })
-  },
+  }
 })
 
 export default createUserSlice.reducer

@@ -1,26 +1,28 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-import { getToken, removeToken } from '../../helpers/storage';
-import { authApi, IUserResponse } from '../../services/auth';
-import { RootState } from '../../store/store';
-import { setUser } from '../user/getUserSlice';
+import { getToken, removeToken } from '../../helpers/storage'
+import { authApi, IUserResponse } from '../../services/auth'
+import { RootState } from '../../store/store'
+import { setUser } from '../user/getUserSlice'
 
 interface IError {
   code: string
-  message: string,
+  message: string
   shortMessage: string
 }
 
-const initialState = {
-  user: null,
-  token: getToken() || null,
-  isAuthenticated: false,
-  error: null,
-} as {
-  user: null | IUserResponse;
-  token: string | null;
-  isAuthenticated: boolean;
+interface IInitialState {
+  user: null | IUserResponse
+  token: string | null
+  isAuthenticated: boolean
   error: IError | null
+}
+
+const initialState: IInitialState = {
+  user: null,
+  token: getToken() ?? null,
+  isAuthenticated: false,
+  error: null
 }
 
 const slice = createSlice({
@@ -28,12 +30,12 @@ const slice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
-      removeToken();
+      removeToken()
       state.user = null
       state.token = null
       state.isAuthenticated = false
       state.error = null
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -56,11 +58,11 @@ const slice = createSlice({
         state.isAuthenticated = false
         state.error = action.payload?.data as IError
       })
-  },
+  }
 })
 
 export default slice.reducer
 export const { logout } = slice.actions
 
-export const selectIsAuthenticated = (state: RootState) =>
+export const selectIsAuthenticated = (state: RootState): string =>
   state.authSlice.isAuthenticated

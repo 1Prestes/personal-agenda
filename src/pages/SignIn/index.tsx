@@ -1,54 +1,64 @@
 import { useEffect } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Button, Checkbox, Col, Form, Input, message, Row, Typography } from 'antd';
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Button, Checkbox, Col, Form, Input, message, Row, Typography } from 'antd'
+import { LockOutlined, UserOutlined } from '@ant-design/icons'
+import { NoticeType } from 'antd/es/message/interface'
 
 import { ILoginRequest, useLoginMutation } from '../../services/auth'
-import { useAppSelector } from '../../store/hooks';
-import { setToken } from '../../helpers/storage';
+import { useAppSelector } from '../../store/hooks'
+import { setToken } from '../../helpers/storage'
 import { Banner, Header, SignInContainer } from './styles'
-import { useDispatch } from 'react-redux';
-import { logout } from '../../features/auth/authSlice';
+import { useDispatch } from 'react-redux'
+import { logout } from '../../features/auth/authSlice'
 
-export const SignIn = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { Paragraph, Title } = Typography;
+interface IMessageProps {
+  type: NoticeType
+  message: string
+}
+
+export const SignIn: React.FC = () => {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { Paragraph, Title } = Typography
   const [login, { isLoading }] = useLoginMutation()
-  const [messageApi, contextHolder] = message.useMessage();
+  const [messageApi, contextHolder] = message.useMessage()
   const { token, error } = useAppSelector(state => state.authSlice)
-  const from = location.state?.from?.pathname || "/";
+  const from = location.state?.from?.pathname || '/'
   const dispatch = useDispatch()
 
-  const onFinish = async (values: ILoginRequest) => {
+  const onFinish = async (values: ILoginRequest): Promise<void> => {
     await login(values).unwrap()
-  };
+  }
+
+  const showMessage = async ({ type, message }: IMessageProps): Promise<void> => {
+    await messageApi.open({
+      type,
+      content: message
+    })
+  }
 
   useEffect(() => {
     if (token) {
       setToken(token)
-      navigate(from, { replace: true });
+      navigate(from, { replace: true })
     }
   }, [token])
 
   useEffect(() => {
     if (error?.code === 'HAE-002') {
-      messageApi.open({
-        type: 'error',
-        content: 'Usuário ou senha inválido',
-      });
+      void showMessage({ type: 'error', message: 'Usuário ou senha inválido' })
       dispatch(logout())
     }
   }, [error, messageApi])
 
-  const onFinishFailed = (errorInfo: Object) => {
-    console.log('Failed:', errorInfo);
-  };
+  const onFinishFailed = (errorInfo: Object): void => {
+    console.log('Failed:', errorInfo)
+  }
 
   return <>
     {contextHolder}
     <Row wrap style={{
-      maxWidth: 1440,
+      maxWidth: 1440
     }}>
       <Col className="gutter-row" span={12}>
         <Header>

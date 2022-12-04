@@ -1,13 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-import { eventApi, IEvent } from '../../services/events';
+import { eventApi, IEvent } from '../../services/events'
 
-const initialState = {
-  events: [],
-  count: null
-} as {
+interface IInitialState {
   events: [] | IEvent[]
   count: null | number
+}
+
+const initialState: IInitialState = {
+  events: [],
+  count: null
 }
 
 const listEventsSlice = createSlice({
@@ -17,7 +19,7 @@ const listEventsSlice = createSlice({
     clearEvents: (state) => {
       state.count = null
       state.events = []
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -33,9 +35,8 @@ const listEventsSlice = createSlice({
         state.count = null
         state.events = []
       })
-  },
+  }
 })
 
 export default listEventsSlice.reducer
 export const { clearEvents } = listEventsSlice.actions
-

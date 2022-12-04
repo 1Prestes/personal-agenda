@@ -5,7 +5,7 @@ export const api = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: 'http://localhost:4005/local/v1/schedule/',
     prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).authSlice?.token
+      const token: string = (getState() as RootState).authSlice?.token
       headers.set('Content-Type', 'application/json')
 
       if (token) {
@@ -13,7 +13,7 @@ export const api = createApi({
       }
 
       return headers
-    },
+    }
   }),
-  endpoints: () => ({}),
+  endpoints: () => ({})
 })

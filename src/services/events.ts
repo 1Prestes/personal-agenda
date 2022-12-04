@@ -25,20 +25,20 @@ export const eventApi = api.injectEndpoints({
     listEvents: builder.mutation<IEventResponse, string>({
       query: (iduser) => ({
         url: `/user/${iduser}/events`,
-        method: 'GET',
-      }),
+        method: 'GET'
+      })
     }),
     deleteEvent: builder.mutation<boolean, IDeleteEventRequest>({
       query: (params) => ({
         url: `/user/${params.iduser}/event/${params.idevent}`,
-        method: 'DELETE',
-      }),
+        method: 'DELETE'
+      })
     }),
-    protected: builder.mutation<{ message: string }, void>({
-      query: () => 'protected',
-    }),
+    protected: builder.mutation<{ message: string }, null>({
+      query: () => 'protected'
+    })
   }),
-  overrideExisting: false,
+  overrideExisting: false
 })
 
 export const { useListEventsMutation, useDeleteEventMutation, useProtectedMutation } = eventApi

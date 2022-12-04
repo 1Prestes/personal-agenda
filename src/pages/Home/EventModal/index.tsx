@@ -1,11 +1,11 @@
-import React from 'react';
-import { Descriptions, Modal, Typography } from 'antd';
+import React from 'react'
+import { Descriptions, Modal, Typography } from 'antd'
 import { FieldTimeOutlined } from '@ant-design/icons'
-import dayjs from 'dayjs';
-import 'dayjs/locale/pt-br';
+import dayjs from 'dayjs'
+import 'dayjs/locale/pt-br'
 
-import { IEvent } from '../../../services/events';
-import { BorderType, ModalContainer } from './styles';
+import { IEvent } from '../../../services/events'
+import { BorderType, ModalContainer } from './styles'
 
 interface IEventModalProps {
   isEventModalOpen: boolean
@@ -14,7 +14,6 @@ interface IEventModalProps {
 }
 
 export const EventModalProps: React.FC<IEventModalProps> = ({ isEventModalOpen, close, event }) => {
-
   return (
     <>
       <Modal
@@ -42,5 +41,5 @@ export const EventModalProps: React.FC<IEventModalProps> = ({ isEventModalOpen, 
         </ModalContainer>
       </Modal>
     </>
-  );
-};
+  )
+}

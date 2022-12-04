@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 import {
   Button,
   Checkbox,
@@ -7,30 +7,30 @@ import {
   Input,
   message,
   Row,
-  Typography,
-} from 'antd';
-import dayjs from 'dayjs';
-import { Link, useNavigate } from 'react-router-dom';
-import 'dayjs/locale/pt-br';
-import locale from 'antd/es/date-picker/locale/pt_BR';
+  Typography
+} from 'antd'
+import dayjs from 'dayjs'
+import { Link, useNavigate } from 'react-router-dom'
+import 'dayjs/locale/pt-br'
+import locale from 'antd/es/date-picker/locale/pt_BR'
 
-import { Banner, Header, RegisterContainer } from './styles';
-import { useCreateUserMutation } from '../../services/user';
+import { Banner, Header, RegisterContainer } from './styles'
+import { IUserRequest, useCreateUserMutation } from '../../services/user'
 
 const formItemLayout = {
   labelCol: {
     xs: { span: 10 },
-    sm: { span: 10 },
+    sm: { span: 10 }
   }
-};
+}
 
 export const SignUp: React.FC = () => {
-  const [form] = Form.useForm();
-  const { Paragraph, Title } = Typography;
+  const [form] = Form.useForm()
+  const { Paragraph, Title } = Typography
   const [agreement, setAgreement] = useState(false)
   const [createUser, { isLoading, isSuccess }] = useCreateUserMutation()
-  const [messageApi, contextHolder] = message.useMessage();
-  let navigate = useNavigate();
+  const [messageApi, contextHolder] = message.useMessage()
+  const navigate = useNavigate()
 
   const initialValues = {
     name: '',
@@ -39,23 +39,26 @@ export const SignUp: React.FC = () => {
     confirmPassword: '',
     address: '',
     birthDate: '',
-    agreement: '',
+    agreement: ''
   }
 
-  const onFinish = async (values: any) => {
+  const onFinish = async (values: IUserRequest): Promise<void> => {
     values.birthDate = dayjs(values.birthDate).format('YYYY-MM-DD')
-    console.log('Received values of form: ', values);
-    await createUser(values).unwrap()
-  };
+    console.log('Received values of form: ', values)
+    void await createUser(values).unwrap()
+  }
+
+  const showMessage = async (message: string): Promise<void> => {
+    await messageApi.open({
+      type: 'success',
+      content: message
+    })
+  }
 
   useEffect(() => {
     if (isSuccess) {
-      messageApi.open({
-        type: 'success',
-        content: 'Cadastro realizado com sucesso!',
-      });
-
-      navigate('/');
+      void showMessage('Cadastro realizado com sucesso!')
+      navigate('/')
     }
   }, [isSuccess])
 
@@ -70,14 +73,14 @@ export const SignUp: React.FC = () => {
 
           <div
             style={{
-              margin: 'auto',
+              margin: 'auto'
             }}
           >
             <Form
               disabled={isLoading}
               style={{
                 width: '100%',
-                padding: 20,
+                padding: 20
               }}
               {...formItemLayout}
               form={form}
@@ -92,8 +95,8 @@ export const SignUp: React.FC = () => {
                 rules={[
                   {
                     required: true,
-                    message: 'Por favor, informe seu nome!',
-                  },
+                    message: 'Por favor, informe seu nome!'
+                  }
                 ]}
               >
                 <Input placeholder="Ex: Jailson Mendes" />
@@ -114,8 +117,8 @@ export const SignUp: React.FC = () => {
                 rules={[
                   {
                     required: true,
-                    message: 'Por favor, informe sua senha!',
-                  },
+                    message: 'Por favor, informe sua senha!'
+                  }
                 ]}
                 hasFeedback
               >
@@ -130,16 +133,16 @@ export const SignUp: React.FC = () => {
                 rules={[
                   {
                     required: true,
-                    message: 'Por fvaor, confirme sua senha!',
+                    message: 'Por fvaor, confirme sua senha!'
                   },
                   ({ getFieldValue }) => ({
-                    validator(_, value) {
+                    async validator (_, value) {
                       if (!value || getFieldValue('password') === value) {
-                        return Promise.resolve();
+                        return await Promise.resolve()
                       }
-                      return Promise.reject(new Error('As duas senhas que você digitou não correspondem!'));
-                    },
-                  }),
+                      return await Promise.reject(new Error('As duas senhas que você digitou não correspondem!'))
+                    }
+                  })
                 ]}
               >
                 <Input.Password placeholder='Confirmação da senha' />
@@ -151,8 +154,8 @@ export const SignUp: React.FC = () => {
                 rules={[
                   {
                     required: true,
-                    message: 'Por favor, informe seu endereço!',
-                  },
+                    message: 'Por favor, informe seu endereço!'
+                  }
                 ]}
               >
                 <Input placeholder="Ex: Rua Bartolomeu Bueno, Caraguatatuba" />
@@ -169,7 +172,7 @@ export const SignUp: React.FC = () => {
               <div
                 style={{
                   margin: '30px auto',
-                  width: '80%',
+                  width: '80%'
                 }}
               >
                 <Form.Item
@@ -178,9 +181,9 @@ export const SignUp: React.FC = () => {
                   noStyle
                   rules={[
                     {
-                      validator: (_, value) =>
-                        value ? Promise.resolve() : Promise.reject(new Error('Você deve aceitar os termos')),
-                    },
+                      validator: async (_, value) =>
+                        value ? await Promise.resolve() : await Promise.reject(new Error('Você deve aceitar os termos'))
+                    }
                   ]}
                 >
                   <Checkbox onChange={(value) => setAgreement(value.target.checked)}>
@@ -192,7 +195,7 @@ export const SignUp: React.FC = () => {
               <div
                 style={{
                   width: '60%',
-                  margin: 'auto',
+                  margin: 'auto'
                 }}
               >
                 <Button
@@ -220,6 +223,5 @@ export const SignUp: React.FC = () => {
         <Banner />
       </Row>
     </>
-  );
-};
-
+  )
+}

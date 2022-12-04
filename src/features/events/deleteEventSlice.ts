@@ -1,11 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-import { eventApi, } from '../../services/events';
+import { eventApi } from '../../services/events'
 
-const initialState = {
-  deleted: null,
-} as {
+interface IInitialState {
   deleted: boolean | null
+}
+
+const initialState: IInitialState = {
+  deleted: null
 }
 
 const deleteEventSlice = createSlice({
@@ -14,7 +16,7 @@ const deleteEventSlice = createSlice({
   reducers: {
     clearDeleteEvent: (state) => {
       state.deleted = null
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -27,9 +29,8 @@ const deleteEventSlice = createSlice({
       .addMatcher(eventApi.endpoints.deleteEvent.matchRejected, (state, action) => {
         state.deleted = null
       })
-  },
+  }
 })
 
 export default deleteEventSlice.reducer
 export const { clearDeleteEvent } = deleteEventSlice.actions
-

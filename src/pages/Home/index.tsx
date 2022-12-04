@@ -1,48 +1,41 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Breadcrumb, Layout, Menu, MenuProps } from 'antd';
+import React, { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { Layout, Menu, MenuProps } from 'antd'
 import {
   GroupOutlined,
   LogoutOutlined,
   ScheduleOutlined,
   TeamOutlined,
   UserOutlined,
-  HomeOutlined,
-} from '@ant-design/icons';
+  HomeOutlined
+} from '@ant-design/icons'
 
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { logout } from '../../features/auth/authSlice';
-import { getUserIdByToken } from '../../helpers/jwt';
-import { useGetUserMutation } from '../../services/user';
+import { useAppDispatch, useAppSelector } from '../../store/hooks'
+import { logout } from '../../features/auth/authSlice'
+import { getUserIdByToken } from '../../helpers/jwt'
+import { useGetUserMutation } from '../../services/user'
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Header, Content, Footer, Sider } = Layout
 
-type MenuItem = Required<MenuProps>['items'][number];
-
+type MenuItem = Required<MenuProps>['items'][number]
 
 interface IMenuItem {
-  label: React.ReactNode,
-  key: React.Key,
-  icon?: React.ReactNode,
-  onClick?: () => void,
-  children?: MenuItem[],
+  label: React.ReactNode
+  key: React.Key
+  icon?: React.ReactNode
+  onClick?: () => void
+  children?: MenuItem[]
 }
 
-function getItem({
+function getItem ({
   label,
   key,
   icon,
   onClick,
-  children,
+  children
 }: IMenuItem
 ): MenuItem {
-  return {
-    key,
-    icon,
-    children,
-    onClick,
-    label,
-  } as MenuItem;
+  return { key, icon, children, onClick, label }
 }
 
 interface IProps {
@@ -50,37 +43,36 @@ interface IProps {
 }
 
 export const Home: React.FC<IProps> = ({ children }: IProps) => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(false)
   const dispatch = useAppDispatch()
-  const navigate = useNavigate();
-  const [getUser] = useGetUserMutation();
+  const navigate = useNavigate()
+  const [getUser] = useGetUserMutation()
   const user = useAppSelector(state => state.getUserSlice.user)
 
-  const loadData = async () => {
-    const iduser = getUserIdByToken();
+  const loadData = async (): Promise<void> => {
+    const iduser = getUserIdByToken()
 
     try {
-      if (!user) {
-        await getUser(iduser).unwrap()
+      if (user != null) {
+        await getUser(iduser as string).unwrap()
       }
-
     } catch (error) {
       console.log('deu ruim ', error)
     }
   }
 
   useEffect(() => {
-    loadData()
+    void loadData()
   }, [])
 
-  const onLogout = () => {
+  const onLogout = (): void => {
     dispatch(logout())
     navigate('/')
   }
 
   const items: MenuItem[] = [
     getItem({
-      label: user?.name.split(' ')[0] || '',
+      label: user?.name.split(' ')[0],
       key: 'user',
       icon: <UserOutlined />
     }),
@@ -92,19 +84,19 @@ export const Home: React.FC<IProps> = ({ children }: IProps) => {
     getItem({
       label: <Link to={'/events'}>Eventos</Link>,
       key: 'events',
-      icon: <ScheduleOutlined />,
+      icon: <ScheduleOutlined />
     }),
     getItem({ label: 'Grupos', key: 'groups', icon: <GroupOutlined /> }),
     getItem({ label: 'Contatos', key: 'contacts', icon: <TeamOutlined /> }),
-    getItem({ label: 'Sair', key: 'logout', icon: <LogoutOutlined />, onClick: onLogout }),
-  ];
+    getItem({ label: 'Sair', key: 'logout', icon: <LogoutOutlined />, onClick: onLogout })
+  ]
 
   const onClick: MenuProps['onClick'] = (e) => {
     if (e.key === 'logout') {
       dispatch(logout())
       navigate('/')
     }
-  };
+  }
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -128,5 +120,5 @@ export const Home: React.FC<IProps> = ({ children }: IProps) => {
         <Footer style={{ textAlign: 'center' }}> IFSP {new Date().getFullYear()} all rights reserved </Footer>
       </Layout>
     </Layout>
-  );
-};
+  )
+}

@@ -1,14 +1,14 @@
 import { api } from './api'
 
 export interface IUserResponse {
-	iduser: string
-	name: string
-	username: string
-	birthDate: Date
-	address: string
-	createdAt: Date
-	updatedAt: Date
-	token: string
+  iduser: string
+  name: string
+  username: string
+  birthDate: Date
+  address: string
+  createdAt: Date
+  updatedAt: Date
+  token: string
 }
 
 export interface ILoginRequest {
@@ -22,14 +22,14 @@ export const authApi = api.injectEndpoints({
       query: (credentials) => ({
         url: '/sign-in',
         method: 'POST',
-        body: credentials,
-      }),
+        body: credentials
+      })
     }),
-    protected: builder.mutation<{ message: string }, void>({
-      query: () => 'protected',
-    }),
+    protected: builder.mutation<{ message: string }, null>({
+      query: () => 'protected'
+    })
   }),
-  overrideExisting: false,
+  overrideExisting: false
 })
 
 export const { useLoginMutation, useProtectedMutation } = authApi

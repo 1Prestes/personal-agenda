@@ -6,10 +6,11 @@ import getUserSlice from '../features/user/getUserSlice'
 import listEventsSlice from '../features/events/listEventSlice'
 import deleteEventSlice from '../features/events/deleteEventSlice'
 import { api } from '../services/api'
+import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore'
 
 export const createStore = (
   options?: ConfigureStoreOptions['preloadedState'] | undefined
-) =>
+): ToolkitStore =>
   configureStore({
     reducer: {
       [api.reducerPath]: api.reducer,
@@ -17,11 +18,11 @@ export const createStore = (
       createUserSlice,
       getUserSlice,
       listEventsSlice,
-      deleteEventSlice,
+      deleteEventSlice
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat(api.middleware),
-    ...options,
+    ...options
   })
 
 export const store = createStore()
