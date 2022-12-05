@@ -9,6 +9,7 @@ import { PublicRoute } from './PublicRoute'
 import { SignUp } from './pages/SignUp'
 import { Events } from './pages/Events'
 import { Schedule } from './pages/Schedule'
+import { Contacts } from './pages/Contacts'
 
 export const Router = createBrowserRouter([
   {
@@ -38,11 +39,21 @@ export const Router = createBrowserRouter([
     )
   },
   {
-    path: '/events',
+    path: '/eventos',
     element: (
       <PrivateRoute>
         <Home>
           <Events />
+        </Home>
+      </PrivateRoute>
+    )
+  },
+  {
+    path: '/contatos',
+    element: (
+      <PrivateRoute>
+        <Home>
+          <Contacts />
         </Home>
       </PrivateRoute>
     )

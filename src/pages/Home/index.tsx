@@ -82,12 +82,12 @@ export const Home: React.FC<IProps> = ({ children }: IProps) => {
       icon: <HomeOutlined />
     }),
     getItem({
-      label: <Link to={'/events'}>Eventos</Link>,
+      label: <Link to={'/eventos'}>Eventos</Link>,
       key: 'events',
       icon: <ScheduleOutlined />
     }),
     getItem({ label: 'Grupos', key: 'groups', icon: <GroupOutlined /> }),
-    getItem({ label: 'Contatos', key: 'contacts', icon: <TeamOutlined /> }),
+    getItem({ label: <Link to={'/contatos'}>Contatos</Link>, key: 'contacts', icon: <TeamOutlined /> }),
     getItem({ label: 'Sair', key: 'logout', icon: <LogoutOutlined />, onClick: onLogout })
   ]
 

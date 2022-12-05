@@ -37,7 +37,6 @@ const createUserSlice = createSlice({
       .addMatcher(userApi.endpoints.createUser.matchFulfilled, (state, action) => {
         state.user = action.payload
         state.error = null
-        console.log('porra')
         setUser(action.payload)
       })
       .addMatcher(userApi.endpoints.createUser.matchRejected, (state, action) => {

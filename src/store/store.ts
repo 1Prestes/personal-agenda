@@ -1,4 +1,5 @@
 import { configureStore, ConfigureStoreOptions } from '@reduxjs/toolkit'
+import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore'
 
 import authSlice from '../features/auth/authSlice'
 import createUserSlice from '../features/user/createUserSlice'
@@ -7,8 +8,8 @@ import listEventsSlice from '../features/events/listEventSlice'
 import deleteEventSlice from '../features/events/deleteEventSlice'
 import createEventSlice from '../features/events/createEventSlice'
 import updateEventSlice from '../features/events/updateEventSlice'
+import createContactSlice from '../features/contacts/createContactSlice'
 import { api } from '../services/api'
-import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore'
 
 export const createStore = (
   options?: ConfigureStoreOptions['preloadedState'] | undefined
@@ -22,7 +23,8 @@ export const createStore = (
       listEventsSlice,
       deleteEventSlice,
       createEventSlice,
-      updateEventSlice
+      updateEventSlice,
+      createContactSlice
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat(api.middleware),

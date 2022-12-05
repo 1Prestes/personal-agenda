@@ -98,8 +98,7 @@ export const Events: React.FC = () => {
   ]
 
   return <>
-    <div style={{
-    }}>
+    <div>
       <EventsContainer>
         <Row justify="space-between">
           <Title level={4}>Meus Eventos</Title>

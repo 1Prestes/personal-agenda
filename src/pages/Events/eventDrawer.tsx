@@ -114,6 +114,7 @@ export const EventDrawer: React.FC<IEventDrawerParams> = ({
         open={openEventDrawer}
         bodyStyle={{ paddingBottom: 80 }}
         footer={footerComponent}
+        forceRender
       >
         <Form
           layout="vertical"
