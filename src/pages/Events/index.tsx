@@ -6,7 +6,7 @@ import { IEvent, useDeleteEventMutation, useListEventsMutation } from '../../ser
 import { getUserIdByToken } from '../../helpers/jwt'
 import { useAppSelector } from '../../store/hooks'
 import { EventsContainer } from './styles'
-import { CreateEventDrawer } from './createEventDrawer'
+import { EventDrawer } from './eventDrawer'
 
 interface IDeleteEvents {
   iduser: string
@@ -17,8 +17,9 @@ export const Events: React.FC = () => {
   const events = useAppSelector(state => state.listEventsSlice.events)
   const [listEvents, { isLoading }] = useListEventsMutation()
   const [deleteEvent, { isLoading: isDeleteEventLoading, isSuccess }] = useDeleteEventMutation()
-  const [openCreateEventDrawer, setOpenCreateEventDrawer] = useState(false)
+  const [openEventDrawer, setOpenEventDrawer] = useState(false)
   const [reload, setReload] = useState(false)
+  const [toEdit, setToEdit] = useState<IEvent>()
 
   const { Title } = Typography
 
@@ -33,10 +34,10 @@ export const Events: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess || reload) {
       void loadEvents()
     }
-  }, [isSuccess])
+  }, [isSuccess, reload])
 
   const confirmDelete = async (payload: IDeleteEvents): Promise<void> => {
     await deleteEvent(payload).unwrap()
@@ -57,29 +58,41 @@ export const Events: React.FC = () => {
       title: 'Data Inicial',
       dataIndex: 'initial_date',
       key: 'initial_date',
-      render: (value: Date) => dayjs(value).format('DD/MM/YYYY')
+      render: (value: Date) => dayjs(value).add(3, 'hours').format('DD/MM/YYYY HH:mm')
     },
     {
       title: 'Data Final',
       dataIndex: 'final_date',
       key: 'final_date',
-      render: (value: Date) => dayjs(value).format('DD/MM/YYYY')
+      render: (value: Date) => dayjs(value).add(3, 'hours').format('DD/MM/YYYY HH:mm')
     },
     {
-      title: 'Ações',
+      title: () => <Typography style={{ textAlign: 'center' }}>Ações</Typography>,
       dataIndex: 'idevent',
       render: (_: string, record: IEvent) =>
         events.length >= 1
           ? (
-            <Popconfirm
-              title={'Deseja excluir este evento?'}
-              okButtonProps={{ loading: isDeleteEventLoading }}
-              onConfirm={async () => await confirmDelete({ idevent: record?.idevent, iduser: record?.iduser })}
-              cancelText="Cancelar"
-              okText="Confirmar"
-            >
-              <Button danger>Excluir</Button>
-            </Popconfirm>)
+            <Row justify='space-between' >
+              <Popconfirm
+                title={'Deseja excluir este evento?'}
+                okButtonProps={{ loading: isDeleteEventLoading }}
+                onConfirm={async () => await confirmDelete({ idevent: record?.idevent, iduser: record?.iduser })}
+                cancelText="Cancelar"
+                okText="Confirmar"
+              >
+                <Button danger>Excluir</Button>
+              </Popconfirm>
+              <Button
+                type='primary'
+                onClick={() => {
+                  setToEdit(record)
+                  setOpenEventDrawer(true)
+                }}
+              >
+                Editar
+              </Button>
+            </Row>
+            )
           : null
     }
   ]
@@ -90,13 +103,13 @@ export const Events: React.FC = () => {
       <EventsContainer>
         <Row justify="space-between">
           <Title level={4}>Meus Eventos</Title>
-          <Button type='primary' onClick={() => setOpenCreateEventDrawer(true)}>Novo</Button>
+          <Button type='primary' onClick={() => setOpenEventDrawer(true)}>Novo</Button>
         </Row>
 
         <Table
           dataSource={events}
           columns={columns}
-          loading={isLoading || reload}
+          loading={isLoading}
           expandable={{
             expandedRowRender: (record) => <p style={{ margin: 0 }}>{record.description}</p>
           }}
@@ -105,9 +118,13 @@ export const Events: React.FC = () => {
       </EventsContainer>
     </div>
 
-    <CreateEventDrawer
-      openCreateEventDrawer={openCreateEventDrawer}
-      closeCreateEventDrawer={() => setOpenCreateEventDrawer(false)}
+    <EventDrawer
+      openEventDrawer={openEventDrawer}
+      closeEventDrawer={() => {
+        setOpenEventDrawer(false)
+        setToEdit(undefined)
+      }}
+      toEdit={toEdit}
       reload={() => {
         setReload(true)
         setTimeout(() => {

@@ -5,13 +5,14 @@ import { NoticeType } from 'antd/es/message/interface'
 import 'dayjs/locale/pt-br'
 import dayjs from 'dayjs'
 
-import { useCreateEventMutation } from '../../services/events'
+import { IEvent, useCreateEventMutation, useUpdateEventMutation } from '../../services/events'
 import { useAppSelector } from '../../store/hooks'
 
-interface ICreateEventDrawerParams {
-  openCreateEventDrawer: boolean
-  closeCreateEventDrawer: () => void
+interface IEventDrawerParams {
+  openEventDrawer: boolean
+  closeEventDrawer: () => void
   reload: () => void
+  toEdit: IEvent | undefined
 }
 
 interface IMessageProps {
@@ -19,11 +20,32 @@ interface IMessageProps {
   message: string
 }
 
-export const CreateEventDrawer: React.FC<ICreateEventDrawerParams> = ({ openCreateEventDrawer, closeCreateEventDrawer, reload }: ICreateEventDrawerParams) => {
-  const [createEvent, { isLoading, isSuccess }] = useCreateEventMutation()
+export const EventDrawer: React.FC<IEventDrawerParams> = ({
+  openEventDrawer,
+  closeEventDrawer,
+  reload,
+  toEdit
+}: IEventDrawerParams) => {
+  const [createEvent, { isLoading, isSuccess, reset: resetCreateEvent }] = useCreateEventMutation()
+  const [updateEvent, {
+    isLoading: isUpdateEventLoading,
+    isSuccess: isUpdateEventSuccess,
+    reset: resetUpdateEvent
+  }] = useUpdateEventMutation()
   const user = useAppSelector(state => state.getUserSlice.user)
   const [messageApi, contextHolder] = message.useMessage()
   const [form] = Form.useForm()
+
+  useEffect(() => {
+    if (toEdit) {
+      form.setFieldsValue({
+        ...toEdit,
+        dateTime: [dayjs(toEdit.initial_date).add(3, 'hours'), dayjs(toEdit.final_date).add(3, 'hours')]
+      })
+    } else {
+      form.resetFields()
+    }
+  }, [toEdit])
 
   const onFinish = async (): Promise<void> => {
     await form.validateFields()
@@ -35,12 +57,13 @@ export const CreateEventDrawer: React.FC<ICreateEventDrawerParams> = ({ openCrea
       ...values,
       iduser: user.iduser,
       initialDate,
-      finalDate
+      finalDate,
+      ...(toEdit && { idevent: toEdit.idevent })
     }
 
     delete payload.dateTime
 
-    await createEvent(payload).unwrap()
+    toEdit ? await updateEvent(payload).unwrap() : await createEvent(payload).unwrap()
   }
 
   const showMessage = async ({ type, message }: IMessageProps): Promise<void> => {
@@ -51,27 +74,32 @@ export const CreateEventDrawer: React.FC<ICreateEventDrawerParams> = ({ openCrea
   }
 
   useEffect(() => {
-    if (isSuccess) {
-      void showMessage({ type: 'success', message: 'Evento registrado com sucesso!' })
+    if (isSuccess || isUpdateEventSuccess) {
+      void showMessage({
+        type: 'success',
+        message: isUpdateEventSuccess && toEdit ? 'Evento atualizado com sucesso!' : 'Evento registrado com sucesso!'
+      })
       reload()
-      closeCreateEventDrawer()
+      resetUpdateEvent()
+      resetCreateEvent()
+      closeEventDrawer()
     }
-  }, [isSuccess])
+  }, [isSuccess, isUpdateEventSuccess])
 
   const footerComponent: React.ReactNode = <Row style={{ marginBottom: 10 }} justify="end">
     <Button
-      disabled={isLoading}
+      disabled={isLoading || isUpdateEventLoading}
       style={{ marginRight: 30 }}
-      onClick={closeCreateEventDrawer}
+      onClick={closeEventDrawer}
     >
       Cancelar
     </Button>
     <Button
       onClick={onFinish}
       type='primary'
-      loading={isLoading}
+      loading={isLoading || isUpdateEventLoading}
     >
-      Cadastrar
+      {toEdit ? 'Editar' : 'Cadastrar'}
     </Button>
   </Row>
 
@@ -79,14 +107,20 @@ export const CreateEventDrawer: React.FC<ICreateEventDrawerParams> = ({ openCrea
     <>
       {contextHolder}
       <Drawer
-        title="Criar novo evento"
+        destroyOnClose={true}
+        title={toEdit ? 'Editar evento' : 'Criar novo evento'}
         width={720}
-        onClose={closeCreateEventDrawer}
-        open={openCreateEventDrawer}
+        onClose={closeEventDrawer}
+        open={openEventDrawer}
         bodyStyle={{ paddingBottom: 80 }}
         footer={footerComponent}
       >
-        <Form layout="vertical" form={form} disabled={isLoading} hideRequiredMark>
+        <Form
+          layout="vertical"
+          form={form}
+          disabled={isLoading || isUpdateEventLoading}
+          hideRequiredMark
+        >
           <Col span={24}>
             <Form.Item
               name="title"

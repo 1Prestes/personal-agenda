@@ -26,7 +26,7 @@ export const EventModalProps: React.FC<IEventModalProps> = ({ isEventModalOpen, 
           <BorderType />
           <div style={{ padding: '10px 0' }}>
             <Descriptions.Item>
-              <FieldTimeOutlined /> {dayjs(event?.initial_date).format('HH:mm')} - {dayjs(event?.final_date).format('HH:mm')}</Descriptions.Item>
+              <FieldTimeOutlined /> {dayjs(event?.initial_date).add(3, 'hours').format('HH:mm')} - {dayjs(event?.final_date).add(3, 'hours').format('HH:mm')}</Descriptions.Item>
             <Descriptions
               title={<Typography style={{
                 whiteSpace: 'normal'
