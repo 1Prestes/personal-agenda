@@ -10,6 +10,15 @@ export interface IEvent {
   iduser: string
 }
 
+export interface ICreateEventRequest {
+  title: string
+  description: string
+  initialDate: Date
+  finalDate: Date
+  place: string
+  iduser: string
+}
+
 export interface IEventResponse {
   count: number
   rows: IEvent[]
@@ -34,6 +43,13 @@ export const eventApi = api.injectEndpoints({
         method: 'DELETE'
       })
     }),
+    createEvent: builder.mutation<IEvent, ICreateEventRequest>({
+      query: (params) => ({
+        url: '/events',
+        method: 'POST',
+        body: params
+      })
+    }),
     protected: builder.mutation<{ message: string }, null>({
       query: () => 'protected'
     })
@@ -41,4 +57,9 @@ export const eventApi = api.injectEndpoints({
   overrideExisting: false
 })
 
-export const { useListEventsMutation, useDeleteEventMutation, useProtectedMutation } = eventApi
+export const {
+  useListEventsMutation,
+  useDeleteEventMutation,
+  useCreateEventMutation,
+  useProtectedMutation
+} = eventApi

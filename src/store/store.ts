@@ -5,6 +5,7 @@ import createUserSlice from '../features/user/createUserSlice'
 import getUserSlice from '../features/user/getUserSlice'
 import listEventsSlice from '../features/events/listEventSlice'
 import deleteEventSlice from '../features/events/deleteEventSlice'
+import createEventSlice from '../features/events/createEventSlice'
 import { api } from '../services/api'
 import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore'
 
@@ -18,7 +19,8 @@ export const createStore = (
       createUserSlice,
       getUserSlice,
       listEventsSlice,
-      deleteEventSlice
+      deleteEventSlice,
+      createEventSlice
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat(api.middleware),

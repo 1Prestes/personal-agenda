@@ -9,8 +9,7 @@ const tokenPrefix = '@TOKEN'
 const cookies = new Cookies()
 
 export const setToken = (token: string): boolean | null => {
-  if (token != null) return null
-
+  if (!token) return null
   cookies.set(tokenPrefix, token, defaultOptions)
 
   return true

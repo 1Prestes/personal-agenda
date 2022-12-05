@@ -3,7 +3,7 @@ import { getToken } from './storage'
 export const getUserIdByToken = (): string | null => {
   const token = getToken()
 
-  if (token === undefined) return null
+  if (!token) return null
 
   try {
     const [, payload] = token.split('.')

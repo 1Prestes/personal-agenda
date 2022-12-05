@@ -53,7 +53,7 @@ export const Home: React.FC<IProps> = ({ children }: IProps) => {
     const iduser = getUserIdByToken()
 
     try {
-      if (user != null) {
+      if (!user) {
         await getUser(iduser as string).unwrap()
       }
     } catch (error) {
