@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Layout, Menu, MenuProps } from 'antd'
 import {
-  GroupOutlined,
+  // GroupOutlined,
   LogoutOutlined,
   ScheduleOutlined,
   TeamOutlined,
@@ -86,7 +86,7 @@ export const Home: React.FC<IProps> = ({ children }: IProps) => {
       key: 'events',
       icon: <ScheduleOutlined />
     }),
-    getItem({ label: 'Grupos', key: 'groups', icon: <GroupOutlined /> }),
+    // getItem({ label: 'Grupos', key: 'groups', icon: <GroupOutlined /> }),
     getItem({ label: <Link to={'/contatos'}>Contatos</Link>, key: 'contacts', icon: <TeamOutlined /> }),
     getItem({ label: 'Sair', key: 'logout', icon: <LogoutOutlined />, onClick: onLogout })
   ]

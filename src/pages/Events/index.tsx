@@ -125,7 +125,7 @@ export const Events: React.FC = () => {
             expandedRowRender: (record) => <p style={{ margin: 0 }}>{record.description}</p>
           }}
           rowKey="idevent"
-        />;
+        />
       </EventsContainer>
     </div>
 
