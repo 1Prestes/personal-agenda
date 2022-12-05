@@ -21,12 +21,23 @@ export interface IContactsFromEventRequest {
   idevent: string
 }
 
+export interface IAddContactToEventRequest extends IContactsFromEventRequest {
+  idcontact: string
+}
+
 export const eventRelationshipApi = api.injectEndpoints({
   endpoints: (builder) => ({
     listContactsFromEvent: builder.mutation<IContactsFromEventResponse, IContactsFromEventRequest>({
       query: (params) => ({
         url: `/event/${params.idevent}/user/${params.iduser}/contacts`,
         method: 'GET'
+      })
+    }),
+    addContactToEvent: builder.mutation<IContactsFromEventResponse, IAddContactToEventRequest>({
+      query: (params) => ({
+        url: '/event/add-contact',
+        method: 'POST',
+        body: params
       })
     }),
     protected: builder.mutation<{ message: string }, null>({
@@ -38,5 +49,6 @@ export const eventRelationshipApi = api.injectEndpoints({
 
 export const {
   useListContactsFromEventMutation,
+  useAddContactToEventMutation,
   useProtectedMutation
 } = eventRelationshipApi

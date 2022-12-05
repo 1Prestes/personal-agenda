@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button, Descriptions, Drawer, Popconfirm, Row, Table, Typography } from 'antd'
 import { FieldTimeOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
@@ -7,6 +7,7 @@ import { IEvent } from '../../services/events'
 import { useListContactsFromEventMutation } from '../../services/eventsRelationship'
 import { useAppSelector } from '../../store/hooks'
 import { IContact } from '../../services/contact'
+import { AddContactToEventDrawer } from './addContactToEventDrawer'
 
 interface IEventDrawerParams {
   openEventDrawerDetails: boolean
@@ -20,7 +21,9 @@ export const EventDrawerDetails: React.FC<IEventDrawerParams> = ({
   event
 }: IEventDrawerParams) => {
   const [listContactsFromEvent, { isLoading }] = useListContactsFromEventMutation()
-  const contacts = useAppSelector(state => state.listContactsFromEventSlice?.event.contacts)
+  const contacts = useAppSelector(state => state.listContactsFromEvent.event?.contacts)
+  const [openAddContactToEventDrawer, setOpenAddContactToEventDrawer] = useState(false)
+  const [reload, setReload] = useState(false)
 
   const loadEvents = async (): Promise<void> => {
     await listContactsFromEvent({
@@ -34,6 +37,12 @@ export const EventDrawerDetails: React.FC<IEventDrawerParams> = ({
       void loadEvents()
     }
   }, [event])
+
+  useEffect(() => {
+    if (reload) {
+      void loadEvents()
+    }
+  }, [reload])
 
   const footerComponent: React.ReactNode = <Row style={{ marginBottom: 10 }} justify="end">
     <Button
@@ -103,6 +112,14 @@ export const EventDrawerDetails: React.FC<IEventDrawerParams> = ({
         footer={footerComponent}
         forceRender
       >
+        <Row justify='end'>
+          <Button
+          onClick={() => setOpenAddContactToEventDrawer(true)}
+           type="primary"
+           >
+            Adicionar contato ao evento
+            </Button>
+        </Row>
         <Table
           dataSource={contacts}
           columns={columns}
@@ -110,6 +127,20 @@ export const EventDrawerDetails: React.FC<IEventDrawerParams> = ({
           rowKey="idcontact"
         />
       </Drawer>
+
+      <AddContactToEventDrawer
+        openAddContactToEventDrawer={openAddContactToEventDrawer}
+        closeAddContactToEventDrawer={() => {
+          setOpenAddContactToEventDrawer(false)
+        }}
+        event={event as IEvent}
+        reload={() => {
+          setReload(true)
+          setTimeout(() => {
+            setReload(false)
+          }, 300)
+        }}
+      />
     </>
   )
 }

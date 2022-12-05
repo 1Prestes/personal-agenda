@@ -12,6 +12,7 @@ import createContactSlice from '../features/contacts/createContactSlice'
 import listContactsSlice from '../features/contacts/listContactsSlice'
 import deleteContactSlice from '../features/contacts/deleteContactSlice'
 import listContactsFromEvent from '../features/eventsRelationship/listContactsFromEventSlice'
+import addContactToEvent from '../features/eventsRelationship/addContactToEventSlice'
 import { api } from '../services/api'
 
 export const createStore = (
@@ -30,7 +31,8 @@ export const createStore = (
       createContactSlice,
       listContactsSlice,
       deleteContactSlice,
-      listContactsFromEvent
+      listContactsFromEvent,
+      addContactToEvent
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat(api.middleware),
