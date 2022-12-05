@@ -89,7 +89,7 @@ export const EventDrawerDetails: React.FC<IEventDrawerParams> = ({
         contacts.length >= 1
           ? (
             <Popconfirm
-              title={'Deseja excluir este contato?'}
+              title={'Deseja remover este contato do evento?'}
               onConfirm={async () => await confirmRemoveContactFromEvent(record?.idcontact)}
               cancelText="Cancelar"
               okText="Confirmar"
@@ -97,7 +97,7 @@ export const EventDrawerDetails: React.FC<IEventDrawerParams> = ({
                 loading: isRemoveContactFromEventLoading
               }}
             >
-              <Button danger>Excluir</Button>
+              <Button danger>Remover</Button>
             </Popconfirm>
             )
           : null
