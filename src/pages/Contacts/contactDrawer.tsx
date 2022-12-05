@@ -11,7 +11,7 @@ import dayjs from 'dayjs'
 interface IContactDrawerParams {
   openContactDrawer: boolean
   closeContactDrawer: () => void
-  reload?: () => void
+  reload: () => void
   toEdit?: IContact | undefined
 }
 
@@ -70,6 +70,7 @@ export const ContactDrawer: React.FC<IContactDrawerParams> = ({
         type: 'success',
         message: 'Contato registrado com sucesso!'
       })
+      reload()
       resetCreateContact()
       closeContactDrawer()
     }

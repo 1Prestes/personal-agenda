@@ -20,13 +20,23 @@ export interface IContactRequest {
   iduser: string
 }
 
+export interface IContactsResponse {
+  count: number
+  rows: IContact[]
+}
 export const contactApi = api.injectEndpoints({
   endpoints: (builder) => ({
     createContact: builder.mutation<IContactResponse, IContactRequest>({
-      query: (credentials) => ({
+      query: (props) => ({
         url: '/contact',
         method: 'POST',
-        body: credentials
+        body: props
+      })
+    }),
+    listContacts: builder.mutation<IContactsResponse, string>({
+      query: (iduser) => ({
+        url: `/contacts?iduser=${iduser}`,
+        method: 'GET'
       })
     }),
     protected: builder.mutation<{ message: string }, null>({
@@ -36,4 +46,4 @@ export const contactApi = api.injectEndpoints({
   overrideExisting: false
 })
 
-export const { useCreateContactMutation, useProtectedMutation } = contactApi
+export const { useCreateContactMutation, useListContactsMutation, useProtectedMutation } = contactApi
