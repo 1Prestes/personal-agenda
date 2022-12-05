@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react'
 import { Button, Drawer, message, Popconfirm, Row, Table, Typography } from 'antd'
 import { NoticeType } from 'antd/es/message/interface'
-import 'dayjs/locale/pt-br'
-import dayjs from 'dayjs'
 
 import { IContact, useListContactsMutation } from '../../services/contact'
 import { getUserIdByToken } from '../../helpers/jwt'
@@ -87,37 +85,28 @@ export const AddContactToEventDrawer: React.FC<IAddContactToEventDrawerParams> =
       key: 'name'
     },
     {
-      title: 'Data de nascimento',
-      dataIndex: 'bithDate',
-      key: 'birthDate',
-      render: (value: Date) => dayjs(value).add(3, 'hours').format('DD/MM/YYYY')
-    },
-    {
-      title: 'Endereço',
-      dataIndex: 'address',
-      key: 'address'
-    },
-    {
-      title: () => <Typography style={{ textAlign: 'center' }}>Ações</Typography>,
+      title: () => <Typography style={{ textAlign: 'end' }}>Ações</Typography>,
       dataIndex: 'idevent',
       render: (_: string, record: IContact) =>
         contacts.length >= 1
           ? (
-            <Popconfirm
-              title={'Deseja adicionar este contato ao evento?'}
-              onConfirm={async () => await confirmAddContactToEvent({
-                idcontact: record.idcontact,
-                idevent: event.idevent,
-                iduser: record.iduser
-              })}
-              cancelText="Cancelar"
-              okButtonProps={{
-                loading: isAddContactToEventLoading
-              }}
-              okText="Confirmar"
-            >
-              <Button type='primary'>Adicionar</Button>
-            </Popconfirm>
+            <Row justify='end'>
+              <Popconfirm
+                title={'Deseja adicionar este contato ao evento?'}
+                onConfirm={async () => await confirmAddContactToEvent({
+                  idcontact: record.idcontact,
+                  idevent: event.idevent,
+                  iduser: record.iduser
+                })}
+                cancelText="Cancelar"
+                okButtonProps={{
+                  loading: isAddContactToEventLoading
+                }}
+                okText="Confirmar"
+              >
+                <Button type='primary'>Adicionar</Button>
+              </Popconfirm>
+            </Row>
             )
           : null
     }

@@ -4,7 +4,7 @@ import { FieldTimeOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
 
 import { IEvent } from '../../services/events'
-import { useListContactsFromEventMutation } from '../../services/eventsRelationship'
+import { useListContactsFromEventMutation, useRemoveContactFromEventMutation } from '../../services/eventsRelationship'
 import { useAppSelector } from '../../store/hooks'
 import { IContact } from '../../services/contact'
 import { AddContactToEventDrawer } from './addContactToEventDrawer'
@@ -21,6 +21,10 @@ export const EventDrawerDetails: React.FC<IEventDrawerParams> = ({
   event
 }: IEventDrawerParams) => {
   const [listContactsFromEvent, { isLoading }] = useListContactsFromEventMutation()
+  const [removeContactFromEvent, {
+    isLoading: isRemoveContactFromEventLoading,
+    isSuccess: isRemoveContactFromEventSuccess
+  }] = useRemoveContactFromEventMutation()
   const contacts = useAppSelector(state => state.listContactsFromEvent.event?.contacts)
   const [openAddContactToEventDrawer, setOpenAddContactToEventDrawer] = useState(false)
   const [reload, setReload] = useState(false)
@@ -32,6 +36,14 @@ export const EventDrawerDetails: React.FC<IEventDrawerParams> = ({
     }).unwrap()
   }
 
+  const confirmRemoveContactFromEvent = async (idcontact: string): Promise<void> => {
+    await removeContactFromEvent({
+      idevent: event?.idevent as string,
+      iduser: event?.iduser as string,
+      idcontact
+    }).unwrap()
+  }
+
   useEffect(() => {
     if (event && openEventDrawerDetails) {
       void loadEvents()
@@ -39,10 +51,10 @@ export const EventDrawerDetails: React.FC<IEventDrawerParams> = ({
   }, [event])
 
   useEffect(() => {
-    if (reload) {
+    if (reload || isRemoveContactFromEventSuccess) {
       void loadEvents()
     }
-  }, [reload])
+  }, [reload, isRemoveContactFromEventSuccess])
 
   const footerComponent: React.ReactNode = <Row style={{ marginBottom: 10 }} justify="end">
     <Button
@@ -78,9 +90,12 @@ export const EventDrawerDetails: React.FC<IEventDrawerParams> = ({
           ? (
             <Popconfirm
               title={'Deseja excluir este contato?'}
-              onConfirm={() => console.log('excluir')}
+              onConfirm={async () => await confirmRemoveContactFromEvent(record?.idcontact)}
               cancelText="Cancelar"
               okText="Confirmar"
+              okButtonProps={{
+                loading: isRemoveContactFromEventLoading
+              }}
             >
               <Button danger>Excluir</Button>
             </Popconfirm>
@@ -114,11 +129,11 @@ export const EventDrawerDetails: React.FC<IEventDrawerParams> = ({
       >
         <Row justify='end'>
           <Button
-          onClick={() => setOpenAddContactToEventDrawer(true)}
-           type="primary"
-           >
+            onClick={() => setOpenAddContactToEventDrawer(true)}
+            type="primary"
+          >
             Adicionar contato ao evento
-            </Button>
+          </Button>
         </Row>
         <Table
           dataSource={contacts}

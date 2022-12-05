@@ -40,6 +40,13 @@ export const eventRelationshipApi = api.injectEndpoints({
         body: params
       })
     }),
+    removeContactFromEvent: builder.mutation<boolean, IAddContactToEventRequest>({
+      query: (params) => ({
+        url: '/event/remove-contact',
+        method: 'POST',
+        body: params
+      })
+    }),
     protected: builder.mutation<{ message: string }, null>({
       query: () => 'protected'
     })
@@ -50,5 +57,6 @@ export const eventRelationshipApi = api.injectEndpoints({
 export const {
   useListContactsFromEventMutation,
   useAddContactToEventMutation,
+  useRemoveContactFromEventMutation,
   useProtectedMutation
 } = eventRelationshipApi
