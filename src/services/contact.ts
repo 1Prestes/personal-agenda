@@ -24,6 +24,12 @@ export interface IContactsResponse {
   count: number
   rows: IContact[]
 }
+
+export interface IDeleteContactRequest {
+  idcontact: string
+  iduser: string
+}
+
 export const contactApi = api.injectEndpoints({
   endpoints: (builder) => ({
     createContact: builder.mutation<IContactResponse, IContactRequest>({
@@ -39,6 +45,12 @@ export const contactApi = api.injectEndpoints({
         method: 'GET'
       })
     }),
+    deleteContact: builder.mutation<boolean, IDeleteContactRequest>({
+      query: (props) => ({
+        url: `/contact/${props.idcontact}/user/${props.iduser}`,
+        method: 'DELETE'
+      })
+    }),
     protected: builder.mutation<{ message: string }, null>({
       query: () => 'protected'
     })
@@ -46,4 +58,9 @@ export const contactApi = api.injectEndpoints({
   overrideExisting: false
 })
 
-export const { useCreateContactMutation, useListContactsMutation, useProtectedMutation } = contactApi
+export const {
+  useCreateContactMutation,
+  useListContactsMutation,
+  useDeleteContactMutation,
+  useProtectedMutation
+} = contactApi

@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Row, Table, Typography } from 'antd'
+import { Button, Popconfirm, Row, Table, Typography } from 'antd'
 import dayjs from 'dayjs'
 
 import { ContactDrawer } from './contactDrawer'
 import { useAppSelector } from '../../store/hooks'
-import { useListContactsMutation } from '../../services/contact'
+import { IContact, useDeleteContactMutation, useListContactsMutation } from '../../services/contact'
 import { getUserIdByToken } from '../../helpers/jwt'
+
+interface IDeleteContact {
+  idcontact: string
+  iduser: string
+}
 
 export const Contacts: React.FC = () => {
   const contacts = useAppSelector(state => state.listContactsSlice.contacts)
   const [listContacts, { isLoading }] = useListContactsMutation()
+  const [deleteContact, { isLoading: isDeleteContactLoading, isSuccess: isDeleceContactSuccess }] = useDeleteContactMutation()
   const [openContactDrawer, setOpenContactDrawer] = useState(false)
   const [reload, setReload] = useState(false)
   const { Title } = Typography
@@ -20,15 +26,19 @@ export const Contacts: React.FC = () => {
     await listContacts(iduser as string).unwrap()
   }
 
+  const confirmDelete = async (payload: IDeleteContact): Promise<void> => {
+    await deleteContact(payload).unwrap()
+  }
+
   useEffect(() => {
     void loadContacts()
   }, [])
 
   useEffect(() => {
-    if (reload) {
+    if (isDeleceContactSuccess || reload) {
       void loadContacts()
     }
-  }, [reload])
+  }, [isDeleceContactSuccess, reload])
 
   const columns = [
     {
@@ -46,6 +56,24 @@ export const Contacts: React.FC = () => {
       title: 'Endereço',
       dataIndex: 'address',
       key: 'address'
+    },
+    {
+      title: () => <Typography style={{ textAlign: 'center' }}>Ações</Typography>,
+      dataIndex: 'idevent',
+      render: (_: string, record: IContact) =>
+        contacts.length >= 1
+          ? (
+              <Popconfirm
+                title={'Deseja excluir este contato?'}
+                okButtonProps={{ loading: isDeleteContactLoading }}
+                onConfirm={async () => await confirmDelete({ idcontact: record?.idcontact, iduser: record?.iduser })}
+                cancelText="Cancelar"
+                okText="Confirmar"
+              >
+                <Button danger>Excluir</Button>
+              </Popconfirm>
+            )
+          : null
     }
   ]
 
@@ -61,7 +89,7 @@ export const Contacts: React.FC = () => {
         columns={columns}
         loading={isLoading}
         rowKey="idcontact"
-      />;
+      />
     </div>
 
     <ContactDrawer
