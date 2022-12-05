@@ -7,6 +7,7 @@ import { getUserIdByToken } from '../../helpers/jwt'
 import { useAppSelector } from '../../store/hooks'
 import { EventsContainer } from './styles'
 import { EventDrawer } from './eventDrawer'
+import { EventDrawerDetails } from './eventDrawerDetails'
 
 interface IDeleteEvents {
   iduser: string
@@ -18,8 +19,9 @@ export const Events: React.FC = () => {
   const [listEvents, { isLoading }] = useListEventsMutation()
   const [deleteEvent, { isLoading: isDeleteEventLoading, isSuccess }] = useDeleteEventMutation()
   const [openEventDrawer, setOpenEventDrawer] = useState(false)
+  const [openEventDrawerDetails, setOpenEventDrawerDetails] = useState(false)
   const [reload, setReload] = useState(false)
-  const [toEdit, setToEdit] = useState<IEvent>()
+  const [eventSelected, setEventSelected] = useState<IEvent>()
 
   const { Title } = Typography
 
@@ -85,11 +87,21 @@ export const Events: React.FC = () => {
               <Button
                 type='primary'
                 onClick={() => {
-                  setToEdit(record)
+                  setEventSelected(record)
                   setOpenEventDrawer(true)
                 }}
               >
                 Editar
+              </Button>
+
+              <Button
+                type='primary'
+                onClick={() => {
+                  setEventSelected(record)
+                  setOpenEventDrawerDetails(true)
+                }}
+              >
+                Visualizar evento
               </Button>
             </Row>
             )
@@ -121,15 +133,23 @@ export const Events: React.FC = () => {
       openEventDrawer={openEventDrawer}
       closeEventDrawer={() => {
         setOpenEventDrawer(false)
-        setToEdit(undefined)
+        setEventSelected(undefined)
       }}
-      toEdit={toEdit}
+      toEdit={eventSelected}
       reload={() => {
         setReload(true)
         setTimeout(() => {
           setReload(false)
         }, 300)
       }}
+    />
+
+    <EventDrawerDetails
+      openEventDrawerDetails={openEventDrawerDetails}
+      closeEventDrawerDetails={() => {
+        setOpenEventDrawerDetails(false)
+      }}
+      event={eventSelected}
     />
   </>
 }
