@@ -147,6 +147,7 @@ export const Events: React.FC = () => {
     <EventDrawerDetails
       openEventDrawerDetails={openEventDrawerDetails}
       closeEventDrawerDetails={() => {
+        setEventSelected(undefined)
         setOpenEventDrawerDetails(false)
       }}
       event={eventSelected}

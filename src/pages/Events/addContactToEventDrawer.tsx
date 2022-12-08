@@ -20,6 +20,16 @@ interface IMessageProps {
   message: string
 }
 
+interface IError {
+  code: string
+  message: string
+  shortMessage: string
+}
+
+interface IErrorResponse {
+  data: IError
+}
+
 export const AddContactToEventDrawer: React.FC<IAddContactToEventDrawerParams> = ({
   openAddContactToEventDrawer,
   closeAddContactToEventDrawer,
@@ -32,6 +42,8 @@ export const AddContactToEventDrawer: React.FC<IAddContactToEventDrawerParams> =
   const [addContactToEvent, {
     isLoading: isAddContactToEventLoading,
     isSuccess,
+    isError,
+    error,
     reset: resetAddContactToEvent
   }] = useAddContactToEventMutation()
 
@@ -51,6 +63,19 @@ export const AddContactToEventDrawer: React.FC<IAddContactToEventDrawerParams> =
       content: message
     })
   }
+
+  useEffect(() => {
+    const code = error as IErrorResponse
+
+    if (code?.data?.code === 'CTC-007') {
+      void showMessage({
+        type: 'error',
+        message: 'O contato já possui um evento marcado para esta data.'
+      })
+
+      resetAddContactToEvent()
+    }
+  }, [isError])
 
   useEffect(() => {
     if (isSuccess) {
