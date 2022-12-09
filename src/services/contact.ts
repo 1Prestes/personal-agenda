@@ -20,6 +20,10 @@ export interface IContactRequest {
   iduser: string
 }
 
+export interface IUpdateContactRequest extends IContactRequest {
+  idcontact: string
+}
+
 export interface IContactsResponse {
   count: number
   rows: IContact[]
@@ -45,6 +49,13 @@ export const contactApi = api.injectEndpoints({
         method: 'GET'
       })
     }),
+    updateContact: builder.mutation<boolean, IUpdateContactRequest>({
+      query: (props) => ({
+        url: '/contact',
+        method: 'PUT',
+        body: props
+      })
+    }),
     deleteContact: builder.mutation<boolean, IDeleteContactRequest>({
       query: (props) => ({
         url: `/contact/${props.idcontact}/user/${props.iduser}`,
@@ -61,6 +72,7 @@ export const contactApi = api.injectEndpoints({
 export const {
   useCreateContactMutation,
   useListContactsMutation,
+  useUpdateContactMutation,
   useDeleteContactMutation,
   useProtectedMutation
 } = contactApi

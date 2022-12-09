@@ -17,6 +17,7 @@ export const Contacts: React.FC = () => {
   const [listContacts, { isLoading }] = useListContactsMutation()
   const [deleteContact, { isLoading: isDeleteContactLoading, isSuccess: isDeleceContactSuccess }] = useDeleteContactMutation()
   const [openContactDrawer, setOpenContactDrawer] = useState(false)
+  const [selectedContact, setSelectedContact] = useState<IContact>()
   const [reload, setReload] = useState(false)
   const { Title } = Typography
 
@@ -48,8 +49,8 @@ export const Contacts: React.FC = () => {
     },
     {
       title: 'Data de nascimento',
-      dataIndex: 'bithDate',
-      key: 'birthDate',
+      dataIndex: 'birth_date',
+      key: 'birth_date',
       render: (value: Date) => dayjs(value).add(3, 'hours').format('DD/MM/YYYY')
     },
     {
@@ -63,6 +64,7 @@ export const Contacts: React.FC = () => {
       render: (_: string, record: IContact) =>
         contacts.length >= 1
           ? (
+            <Row justify='center'>
               <Popconfirm
                 title={'Deseja excluir este contato?'}
                 okButtonProps={{ loading: isDeleteContactLoading }}
@@ -70,8 +72,18 @@ export const Contacts: React.FC = () => {
                 cancelText="Cancelar"
                 okText="Confirmar"
               >
-                <Button danger>Excluir</Button>
+                <Button danger style={{ marginRight: 20 }}>Excluir</Button>
               </Popconfirm>
+              <Button
+                type='primary'
+                onClick={() => {
+                  setSelectedContact(record)
+                  setOpenContactDrawer(true)
+                }}
+              >
+                Editar
+              </Button>
+            </Row>
             )
           : null
     }
@@ -94,7 +106,11 @@ export const Contacts: React.FC = () => {
 
     <ContactDrawer
       openContactDrawer={openContactDrawer}
-      closeContactDrawer={() => setOpenContactDrawer(false)}
+      closeContactDrawer={() => {
+        setSelectedContact(undefined)
+        setOpenContactDrawer(false)
+      }}
+      contact={selectedContact}
       reload={() => {
         setReload(true)
         setTimeout(() => {

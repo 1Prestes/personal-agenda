@@ -2,17 +2,17 @@ import React, { useEffect } from 'react'
 import { Button, Col, DatePicker, Drawer, Form, Input, message, Row } from 'antd'
 import locale from 'antd/es/date-picker/locale/pt_BR'
 import { NoticeType } from 'antd/es/message/interface'
+import dayjs from 'dayjs'
 import 'dayjs/locale/pt-br'
 
 import { useAppSelector } from '../../store/hooks'
-import { IContact, useCreateContactMutation } from '../../services/contact'
-import dayjs from 'dayjs'
+import { IContact, useCreateContactMutation, useUpdateContactMutation } from '../../services/contact'
 
 interface IContactDrawerParams {
   openContactDrawer: boolean
   closeContactDrawer: () => void
   reload: () => void
-  toEdit?: IContact | undefined
+  contact?: IContact
 }
 
 interface IMessageProps {
@@ -24,22 +24,28 @@ export const ContactDrawer: React.FC<IContactDrawerParams> = ({
   openContactDrawer,
   closeContactDrawer,
   reload,
-  toEdit
+  contact
 }: IContactDrawerParams) => {
   const [createContact, { isLoading, isSuccess, reset: resetCreateContact }] = useCreateContactMutation()
+  const [updateContact, {
+    isLoading: isUpdateContactLoading,
+    isSuccess: isUpdateSuccess,
+    reset: resetUpdateContact
+  }] = useUpdateContactMutation()
   const user = useAppSelector(state => state.getUserSlice.user)
   const [messageApi, contextHolder] = message.useMessage()
   const [form] = Form.useForm()
 
   useEffect(() => {
-    if (toEdit) {
+    if (contact) {
       form.setFieldsValue({
-        ...toEdit
+        ...contact,
+        birth_date: dayjs(contact.birth_date).add(3, 'hours')
       })
     } else {
       form.resetFields()
     }
-  }, [toEdit])
+  }, [contact])
 
   const onFinish = async (): Promise<void> => {
     await form.validateFields()
@@ -49,12 +55,12 @@ export const ContactDrawer: React.FC<IContactDrawerParams> = ({
       ...values,
       iduser: user?.iduser,
       birthDate: dayjs(values?.birth_date).subtract(3, 'hours').toISOString(),
-      ...(toEdit && { idcontact: toEdit.idcontact })
+      ...(contact && { idcontact: contact.idcontact })
     }
 
     delete payload?.birth_date
 
-    await createContact(payload).unwrap()
+    contact ? await updateContact(payload).unwrap() : await createContact(payload).unwrap()
   }
 
   const showMessage = async ({ type, message }: IMessageProps): Promise<void> => {
@@ -65,20 +71,21 @@ export const ContactDrawer: React.FC<IContactDrawerParams> = ({
   }
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess || isUpdateSuccess) {
       void showMessage({
         type: 'success',
-        message: 'Contato registrado com sucesso!'
+        message: contact ? 'Contato atualizado com sucesso!' : 'Contato registrado com sucesso!'
       })
       reload()
       resetCreateContact()
+      resetUpdateContact()
       closeContactDrawer()
     }
-  }, [isSuccess])
+  }, [isSuccess, isUpdateSuccess])
 
   const footerComponent: React.ReactNode = <Row style={{ marginBottom: 10 }} justify="end">
     <Button
-      disabled={isLoading}
+      disabled={isLoading || isUpdateContactLoading}
       style={{ marginRight: 30 }}
       onClick={closeContactDrawer}
     >
@@ -87,9 +94,9 @@ export const ContactDrawer: React.FC<IContactDrawerParams> = ({
     <Button
       onClick={onFinish}
       type='primary'
-      loading={isLoading}
+      loading={isLoading || isUpdateContactLoading}
     >
-      {toEdit ? 'Editar' : 'Cadastrar'}
+      {contact ? 'Editar' : 'Cadastrar'}
     </Button>
   </Row>
 
@@ -98,7 +105,7 @@ export const ContactDrawer: React.FC<IContactDrawerParams> = ({
       {contextHolder}
       <Drawer
         destroyOnClose={true}
-        title={toEdit ? 'Editar contato' : 'Criar novo contato'}
+        title={contact ? 'Editar contato' : 'Criar novo contato'}
         width={720}
         onClose={closeContactDrawer}
         open={openContactDrawer}
@@ -109,8 +116,7 @@ export const ContactDrawer: React.FC<IContactDrawerParams> = ({
         <Form
           layout="vertical"
           form={form}
-          disabled={isLoading}
-          hideRequiredMark
+          disabled={isLoading || isUpdateContactLoading}
         >
           <Col span={24}>
             <Form.Item
