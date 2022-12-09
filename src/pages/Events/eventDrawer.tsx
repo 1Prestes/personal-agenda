@@ -82,6 +82,7 @@ export const EventDrawer: React.FC<IEventDrawerParams> = ({
       reload()
       resetUpdateEvent()
       resetCreateEvent()
+      form.resetFields()
       closeEventDrawer()
     }
   }, [isSuccess, isUpdateEventSuccess])
@@ -90,7 +91,10 @@ export const EventDrawer: React.FC<IEventDrawerParams> = ({
     <Button
       disabled={isLoading || isUpdateEventLoading}
       style={{ marginRight: 30 }}
-      onClick={closeEventDrawer}
+      onClick={() => {
+        form.resetFields()
+        closeEventDrawer()
+      }}
     >
       Cancelar
     </Button>
@@ -110,7 +114,10 @@ export const EventDrawer: React.FC<IEventDrawerParams> = ({
         destroyOnClose={true}
         title={toEdit ? 'Editar evento' : 'Criar novo evento'}
         width={720}
-        onClose={closeEventDrawer}
+        onClose={() => {
+          form.resetFields()
+          closeEventDrawer()
+        }}
         open={openEventDrawer}
         bodyStyle={{ paddingBottom: 80 }}
         footer={footerComponent}

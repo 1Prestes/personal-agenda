@@ -132,8 +132,8 @@ export const Events: React.FC = () => {
     <EventDrawer
       openEventDrawer={openEventDrawer}
       closeEventDrawer={() => {
-        setOpenEventDrawer(false)
         setEventSelected(undefined)
+        setOpenEventDrawer(false)
       }}
       toEdit={eventSelected}
       reload={() => {
