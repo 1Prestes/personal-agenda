@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Button, Checkbox, Col, Form, Input, message, Row, Typography } from 'antd'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
@@ -16,6 +16,10 @@ interface IMessageProps {
   message: string
 }
 
+interface ILoginFormProps extends ILoginRequest {
+  remember: boolean
+}
+
 export const SignIn: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
@@ -24,9 +28,20 @@ export const SignIn: React.FC = () => {
   const [messageApi, contextHolder] = message.useMessage()
   const { token, error } = useAppSelector(state => state.authSlice)
   const from = location.state?.from?.pathname || '/'
+  const [loginToSave, setLoginToSave] = useState<ILoginRequest | null>()
   const dispatch = useDispatch()
 
-  const onFinish = async (values: ILoginRequest): Promise<void> => {
+  const initialState = {
+    ...(
+      localStorage.getItem(btoa('restore')) && JSON.parse(atob(localStorage.getItem(btoa('restore')) as string))
+    )
+  }
+
+  const onFinish = async (values: ILoginFormProps): Promise<void> => {
+    values.remember
+      ? setLoginToSave({ username: values.username, password: values.password })
+      : localStorage.removeItem(btoa('restore'))
+
     await login(values).unwrap()
   }
 
@@ -40,6 +55,7 @@ export const SignIn: React.FC = () => {
   useEffect(() => {
     if (token) {
       setToken(token)
+      loginToSave && localStorage.setItem(btoa('restore'), btoa(JSON.stringify(loginToSave)))
       navigate(from, { replace: true })
     }
   }, [token])
@@ -71,7 +87,10 @@ export const SignIn: React.FC = () => {
           <Col span={24}>
             <Form
               name="basic"
-              initialValues={{ remember: true }}
+              initialValues={{
+                ...initialState,
+                remember: true
+              }}
               onFinish={onFinish}
               onFinishFailed={onFinishFailed}
               autoComplete="off"
