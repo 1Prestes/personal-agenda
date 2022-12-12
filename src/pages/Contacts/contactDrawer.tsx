@@ -77,6 +77,7 @@ export const ContactDrawer: React.FC<IContactDrawerParams> = ({
         message: contact ? 'Contato atualizado com sucesso!' : 'Contato registrado com sucesso!'
       })
       reload()
+      form.resetFields()
       resetCreateContact()
       resetUpdateContact()
       closeContactDrawer()
